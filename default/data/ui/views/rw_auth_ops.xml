@@ -57,7 +57,7 @@
   <row>
     <panel>
       <chart>
-        <title>Authentication Success Rate Over Time</title>
+        <title>Authentication Success Rate</title>
         <search id="bs1">
           <query>`rw_auth_indexes` sourcetype="OktaIM2:log" action=success OR action=failure
 | timechart partial=f span=1h dc(user) by action
@@ -86,7 +86,7 @@
     </panel>
     <panel>
       <chart>
-        <title>Authentication Failure Reasons Over Time</title>
+        <title>Authentication Failure Reasons</title>
         <search>
           <query>index=okta sourcetype="OktaIM2:log" action=failure 
 | timechart span=1h count by outcome.reason limit=0</query>
