@@ -2,7 +2,7 @@
 # Introduction
 The purpose of the Remote Workforce Dashboards is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
-![remote work app dashboard](https://github.com/splunk/remote-work-app/tree/readmemd/static/remoteWorkforceDashboard.png)
+![remote work app dashboard](static/remoteWorkforceDashboard.png)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
@@ -10,7 +10,7 @@ This document provides step by step instructions to install and configure your o
 
 ## Example of Remote Workforce Data Collection
 
-![data collection flow](https://github.com/splunk/remote-work-app/tree/readmemd/static/data_collection_flow.png)
+![data collection flow](static/data_collection_flow.png)
 
 # Checklist
 This section provides you the prerequisites to successfully install the Remote Workforce App.
