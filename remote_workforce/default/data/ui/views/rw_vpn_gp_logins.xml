@@ -1,0 +1,300 @@
+<form theme="dark" stylesheet="style.css">
+  <label>VPN Ops</label>
+  <search id="bs1">
+    <query>
+      <![CDATA[
+        | tstats summariesonly=f values(log.src_ip) as log.src_ip values(log.description) as log.description FROM datamodel="pan_firewall" WHERE nodename="log.system.globalprotect" log.event_id="globalprotectportal-auth-succ" OR log.event_id="globalprotectportal-auth-fail" groupby _time log.event_id log.user span=1s
+        | rename log.* as *
+        | replace "globalprotectportal-auth-fail" with "failure" in event_id
+        | replace "globalprotectportal-auth-succ" with "success" in event_id
+        | rex field=description "(?<failure_reason>(?<=\ Reason:\s)([^,]+))"
+        | iplocation src_ip
+        | fillnull value="*Unknown" failure_reason 
+        | eval City = if(isnull(City) OR City="", "*Unknown", City) 
+        | search $Country$ $City$
+      ]]>
+    </query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+  </search>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="time" token="time" searchWhenChanged="true">
+      <label>Select Timeframe</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+    <input type="dropdown" token="Country" searchWhenChanged="true">
+      <label>Country</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <prefix>Country="</prefix>
+      <suffix>"</suffix>
+      <initialValue>*</initialValue>
+      <fieldForLabel>Country</fieldForLabel>
+      <fieldForValue>Country</fieldForValue>
+      <search base="bs1">
+        <query>| stats count by Country</query>
+      </search>
+    </input>
+    <input type="dropdown" token="City" searchWhenChanged="true">
+      <label>City</label>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <fieldForLabel>City</fieldForLabel>
+      <fieldForValue>City</fieldForValue>
+      <search base="bs1">
+        <query>| stats count by City</query>
+      </search>
+      <prefix>City="</prefix>
+      <suffix>"</suffix>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <map>
+        <title>Connected Workforce by Location</title>
+        <search base="bs1">
+          <query>| geostats count by event_id</query>
+        </search>
+        <option name="drilldown">all</option>
+        <option name="mapping.choroplethLayer.colorBins">5</option>
+        <option name="mapping.choroplethLayer.colorMode">auto</option>
+        <option name="mapping.choroplethLayer.maximumColor">0xDB5800</option>
+        <option name="mapping.choroplethLayer.minimumColor">0x2F25BA</option>
+        <option name="mapping.choroplethLayer.neutralPoint">0</option>
+        <option name="mapping.choroplethLayer.shapeOpacity">0.75</option>
+        <option name="mapping.choroplethLayer.showBorder">1</option>
+        <option name="mapping.data.maxClusters">100</option>
+        <option name="mapping.map.center">(0,0)</option>
+        <option name="mapping.map.panning">1</option>
+        <option name="mapping.map.scrollZoom">0</option>
+        <option name="mapping.map.zoom">2</option>
+        <option name="mapping.markerLayer.markerMaxSize">50</option>
+        <option name="mapping.markerLayer.markerMinSize">10</option>
+        <option name="mapping.markerLayer.markerOpacity">0.8</option>
+        <option name="mapping.showTiles">1</option>
+        <option name="mapping.tileLayer.maxZoom">15</option>
+        <option name="mapping.tileLayer.minZoom">0</option>
+        <option name="mapping.tileLayer.tileOpacity">1</option>
+        <option name="mapping.type">marker</option>
+      </map>
+      <html>
+        <b>Description:</b> This map shows where our Workers are connecting from.
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Logins by Country</title>
+        <search base="bs1">
+          <query>| stats count by Country</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Logins by City</title>
+        <search base="bs1">
+          <query>| stats count by City</query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Logins by Success/Failure</title>
+        <search base="bs1">
+          <query>| stats count by event_id
+| rename event_id as auth_status</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Reasons for login failure</title>
+        <search base="bs1">
+          <query>| stats count by failure_reason</query>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Successful vs Failed Logins</title>
+        <search>
+          <query>| tstats summariesonly=f values(log.src_ip) as log.src_ip values(log.description) as log.description 
+    FROM datamodel="pan_firewall" 
+    WHERE nodename="log.system.globalprotect" 
+    log.event_id IN ("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ","globalprotectgateway-auth-fail","globalprotectgateway-regist-fail","globalprotectportal-auth-fail","globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ")
+    log.description!="*Invalid username*" log.description!="*Internal okta*" log.description!="Existing user session found"
+    by _time log.event_id log.user span=1s 
+| rename log.* as * 
+| eval success = if(event_id IN("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ"),1,0), 
+    failure = if(event_id IN("globalprotectgateway-auth-fail","globalprotectgateway-regist-fail","globalprotectportal-auth-fail"),1,0) 
+| eval user = if(event_id IN("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ"),user,null()) 
+| timechart sum(success) as success sum(failure) as failure dc(user) as unique_users</query>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Number of Logins</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.text">Unique Users</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.overlayFields">unique_users</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">top</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Unique Users by Global Protect Gateway</title>
+        <search>
+          <query>| tstats summariesonly=f prestats=t dc(log.src_ip) 
+    FROM datamodel="pan_firewall" 
+    WHERE nodename="log.system.globalprotect" 
+    log.description!="*Invalid username*" log.description!="*Internal okta*" log.description!="Existing user session found"
+    by _time log.object span=30m
+| timechart span=30m dc(log.src_ip) as unique_users by log.object</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">none</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">none</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Login Details</title>
+        <search base="bs1">
+          <query>| fields _time user event_id failure_reason src_ip City Country
+| rename user as User, event_id as Status, failure_reason as "Failure Reason", src_ip as "Source IP"</query>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">true</option>
+        <option name="wrap">true</option>
+        <drilldown>
+          <link target="_blank">search?q=%60rw_vpn_indexes%60%20TERM($row.User$)%20user=$row.User$%20TERM($row.Source%20IP$)%20src_ip=$row.Source%20IP$&amp;earliest=$time.earliest$&amp;latest=$time.latest$</link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+</form>
