@@ -295,7 +295,7 @@
   <row>
     <panel>
       <chart>
-        <title>In general, how many Meetings do we have for a set number of Participants?</title>
+        <title># Meetings by # Participants</title>
         <search>
           <query>`rw_vc_indexes` sourcetype="zoom:webhook" event=meeting.participant_joined 
 | bin span=1h _time 

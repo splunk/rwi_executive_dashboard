@@ -231,7 +231,7 @@
     </panel>
     <panel>
       <chart>
-        <title>Unique Users by Global Protect Gateway</title>
+        <title>Unique Users by Gateway</title>
         <search>
           <query>| tstats summariesonly=f prestats=t dc(log.src_ip) 
     FROM datamodel="pan_firewall" 
