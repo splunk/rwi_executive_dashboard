@@ -6,7 +6,7 @@
     * [Example of Remote Workforce Data Collection](#example-of-remote-workforce-data-collection)
 * [Checklist](#checklist)
     * [Splunk Applications](#splunk-applications)
-    * [Splunk Intrastructure](#splunk-infrastructure)
+    * [Splunk Infrastructure](#splunk-infrastructure)
     * [Permissions Requirements](#permissions-requirements)
 * [Runbook Summary](#runbook-summary)
     * [Install Splunk Apps](#install-splunk-apps)
@@ -62,7 +62,7 @@ Download the following apps from Splunkbase.com and deploy them according to you
 * Zoom
   * [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook)
 
-## Splunk Intrastructure
+## Splunk Infrastructure
 * Single Instance
   * Any Splunk Enterprise version 7.3 or higher
     * For more information about which Splunk Deployment si right for you see [About Splunk Enterprise deployments](https://docs.splunk.com/Documentation/Splunk/8.0.2/Overview/AboutSplunkEnterprisedeployments)
