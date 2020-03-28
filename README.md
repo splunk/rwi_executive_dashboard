@@ -4,7 +4,7 @@ The purpose of the Remote Workforce Dashboards is to provide the ability to aggr
 
 ![remote work app dashboard](media/remoteWorkforceDashboard.png)
 
-**Dashboard Reference**: [**Remote Workforce [rw_exec.xml]**](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [Remote Workforce (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 

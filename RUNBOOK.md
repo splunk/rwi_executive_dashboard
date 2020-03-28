@@ -4,7 +4,7 @@ The purpose of the Remote Workforce Dashboards is to provide the ability to aggr
 
 ![remote work app dashboard](media/remoteWorkforceDashboard.png)
 
-**Dashboard Reference**: [Remote Workforce [rw_exec.xml]](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [Remote Workforce (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
@@ -164,7 +164,7 @@ This section is only applicable to Zoom Data Collection.
 
 * ***Create*** a Webhook Only App
 
-![](media/zoom_webhook_only.png) <!-- .element height="40%" width="40%" -->
+![](media/zoom_webhook_only.png){:height="40%" width="40%"}
 
 * Fill the App Information and click Continue
   * App Name
@@ -181,35 +181,35 @@ This section is only applicable to Zoom Data Collection.
 
 * Click on ***Add new event subscription*** button
 
-![](media/zoom_event_addnew.png) <!-- .element height="90%" width="90%" -->
+![](media/zoom_event_addnew.png)
 
 * Provide the following information
   * Subscription Name (eg: Splunk)
   * Event notification endpoint URL (eg: https://example.com:4443)
 
-![](media/zoom_event_add_dialog.png) <!-- .element height="90%" width="90%" -->
+![](media/zoom_event_add_dialog.png)
 
 * Click on ***Add events*** button
 
-![](media/zoom_add_events_btn.png) <!-- .element height="90%" width="90%" -->
+![](media/zoom_add_events_btn.png)
 
 * Subscribe to any Webhook Events you wish. For more details, please visit the [Zoom Webhook Reference page](https://marketplace.zoom.us/docs/api-reference/webhook-reference).
 
-![](media/zoom_event_types.png) <!-- .element height="90%" width="90%" -->
+![](media/zoom_event_types.png)
 
 * Click ***Save***
 
-![](media/zoom_save_events.png) <!-- .element height="90%" width="90%" -->
+![](media/zoom_save_events.png)
 
 * Click ***Continue***
 * Activate your newly created Webhook Only App
 
-![](media/zoom_activate_app.png) <!-- .element height="60%" width="60%" -->
+![](media/zoom_activate_app.png)
 
 ## Configure the Splunk Remote Workforce App
 * From the Splunk Search Head, go to the ***Remote Workforce*** App
 
-![](media/remote_workforce_icon.png) <!-- .element height="50%" width="50%" -->
+![](media/remote_workforce_icon.png)
 
 * Go to ***Settings > Advanced Search > Search Macros*** to update the Index Macros
 
@@ -223,7 +223,7 @@ This section is only applicable to Zoom Data Collection.
   * VPN: rw_vpn_indexes
     * (index=pan)
 
-![](media/search_macros.png) <!-- .element height="60%" width="60%" -->
+![](media/search_macros.png)
 
 # Additional Resources
 
@@ -255,7 +255,7 @@ This section is only applicable to Zoom Data Collection.
 ## Remote Workforce Home Dashboard
 ![](media/remoteWorkforceDashboard.png)
 
-**Dashboard Reference**: [[rw_exec.xml]](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [rw_exec.xml](default/data/ui/views/rw_exec.xml)
 
 The first row of the Remote Workforce Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
 
@@ -267,20 +267,20 @@ The combination of VPN, authentication, and video conferencing services will pro
 ## VPN Ops Dashboard
 ![](media/vpn_ops_dashboard.png)
 
-**Dashboard Reference**: [[rw_vpn_gp_logins.xml]](default/data/ui/views/rw_vpn_gp_logins.xml)
+**Dashboard Reference**: [rw_vpn_gp_logins.xml](default/data/ui/views/rw_vpn_gp_logins.xml)
 
 The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regional gateways.
 
 ## Zoom Ops Dashboard
 ![](media/zoom_ops_dashboard.png)
 
-**Dashboard Reference**: [[rw_vc_zoom_ops.xml]](default/data/ui/views/rw_vc_zoom_ops.xml)
+**Dashboard Reference**: [rw_vc_zoom_ops.xml](default/data/ui/views/rw_vc_zoom_ops.xml)
 
 The top row of the Zoom Ops dashboard displays real time Zoom statistics: number of current active video conferencing sessions, number of active participants, duration of the longest ongoing meeting, average meeting length, and shortest meeting in the last 1 hour. The middle row shows the number of meetings over time by hour and whether meetings are completed in the scheduled amount of time or run over to provide insight into the distribution of activity over the course of a day. The bottom row shows the number of meetings by type and also indicates the distribution of devices that were used to join Zoom.
 
 ## Authentications Ops Dashboard
 ![](media/auth_ops_dashboard.png)
 
-**Dashboard Reference**: [[rw_auth_ops.xml]](default/data/ui/views/rw_auth_ops.xml)
+**Dashboard Reference**: [rw_auth_ops.xml](default/data/ui/views/rw_auth_ops.xml)
 
 The top row of the Authentication Ops dashboard provides real time authentication information for applications accessed via Okta: the success rate and the number of authentication attempts over the last hour. The middle row provides these same metrics over the past seven days, and indicates the reasons for failure. The bottom panel indicates the authentication success rate by application.
