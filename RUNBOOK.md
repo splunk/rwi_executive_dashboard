@@ -1,4 +1,37 @@
-# Remote Workforce
+# Remote Workforce - Runbook
+
+# Table of Contents
+
+* [Remote Workforce][#remote-workforce]
+* [Introduction][#introduction]
+    * [Example of Remote Workforce Data Collection][#example-of-remote-workforce-data-collection]
+* [Checklist][#checklist]
+    * [Splunk Applications][#splunk-applications]
+    * [Splunk Intrastructure][#splunk-infrastructure]
+    * [Permissions Requirements][#permissions-requirements]
+* [Runbook Summary][#runbook-summary]
+    * [Install Splunk Apps][#install-splunk-apps]
+    * [Create Splunk Indexes][#create-splunk-indexes]
+    * [Configure Data Models][#configure-data-models]
+    * [Configure Data Collections][#configure-data-collections]
+    * [Create Zoom Webhook (Zoom only)][#create-zoom-webhook-zoom-only]
+    * [Configure Remote Workforce App][#configure-remote-workforce-app]
+* [Zoom Walkthrough][#zoom-walkthrough]
+    * [Configure Splunk JWT Webhook Modular Input Add-on][#configure-splunk-jwt-webhook-modular-input-add-on]
+    * [Create Zoom Webhook Only App][#create-zoom-webhook-only-app]
+    * [Configure the Splunk Remote Workforce App][#configure-the-splunk-remote-workforce-app]
+* [Additional Resources][#additional-resources]
+    * [Splunk Docs][#splunk-docs]
+    * [Splunk JWT Webhook Add-on Support][#splunk-jwt-webhook-add-on-support]
+    * [Zoom References][#zoom-references]
+* [Appendix][#appendix]
+    * [Zoom Webhook Data Flow Diagram][#zoom-webhook-data-flow-diagram]
+* [Remote Workforce Dashboards][#remote-workforce-dashboards]
+    * [Remote Workforce Home Dashboard][#remote-workforce-home-dashboard]
+    * [VPN Ops Dashboard][#vpn-ops-dashboard]
+    * [Zoom Ops Dashboard][#zoom-ops-dashboard]
+    * [Authentications Ops Dashboard][#authentications-ops-dashboard]
+
 # Introduction
 The purpose of the Remote Workforce Dashboards is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
