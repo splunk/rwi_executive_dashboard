@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Splunk Remote Workforce App package
+- Splunk Remote Workforce Package
 - Navigation Menu
 - Dashboards
     - Remote Workforce Executive View
