@@ -15,5 +15,5 @@ Check out the [**runbook**](RUNBOOK.md) for details!
 ## Dashboards Reference
 * See [Runbook: Remote Workforce Dashboards](RUNBOOK.md#remote-workforce-dashboards)
 
-## Latest Update
+## Latest Updates
 * See [Changelog](CHANGELOG.md)
