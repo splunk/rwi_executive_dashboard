@@ -164,7 +164,7 @@ This section is only applicable to Zoom Data Collection.
 
 * ***Create*** a Webhook Only App
 
-![](media/zoom_webhook_only.png){:height="40%" width="40%"}
+![](media/zoom_webhook_only.png =350x)
 
 * Fill the App Information and click Continue
   * App Name
