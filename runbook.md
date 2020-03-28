@@ -2,7 +2,7 @@
 # Introduction
 The purpose of the Remote Workforce Dashboards is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
-![remote work app dashboard](static/remoteWorkforceDashboard.png)
+![remote work app dashboard](media/remoteWorkforceDashboard.png)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
@@ -10,7 +10,7 @@ This document provides step by step instructions to install and configure your o
 
 ## Example of Remote Workforce Data Collection
 
-![data collection flow](static/data_collection_flow.png)
+![data collection flow](media/data_collection_flow.png)
 
 # Checklist
 This section provides you the prerequisites to successfully install the Remote Workforce App.
@@ -127,9 +127,9 @@ This section is only applicable to Zoom Data Collection.
   * More details on [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) and feel free to contact the Zoom directly for additional assistance.|
 * Install [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook) on a Splunk Heavy Forwarder (Single Instance Deployments can use the same instance) |
 * From the Splunk Web Interface, go to **Settings > Data Inputs**
-![](static/data_input.png)
+![](media/data_input.png)
 * Click **Add New** for the **JWT Webhook** input
-![](static/jwt_webhook.png)
+![](media/jwt_webhook.png)
 * Fill the parameters as per the table below or you may enter specific value as per your environment. 
 **Note:**
 * The JWT Webhook Add-On leverages the default Splunk Web self-signed certificate and private key as described here: [About securing Splunk Enterprise with SSL](https://docs.splunk.com/Documentation/Splunk/latest/Security/AboutsecuringyourSplunkconfigurationwithSSL). For security reasons and best practices, it is recommended to use Trusted CA Signed SSL Certificates. You may follow this documentation to assist you with generating the needed certificates for your trusted CA: [How to get certificates signed by a third-party](https://docs.splunk.com/Documentation/Splunk/latest/Security/Howtogetthird-partycertificates). 
@@ -151,46 +151,46 @@ This section is only applicable to Zoom Data Collection.
 | Sourcetype | zoom:webhook |
 | Host | Leave as is |
 | Index | zoom |
-![](static/add_data_dialog.png)
+![](media/add_data_dialog.png)
 * Click the ***Next*** button and this should complete the Input setup.
-![](static/add_data_dialog_focus.png)
+![](media/add_data_dialog_focus.png)
 
 ## Create Zoom Webhook Only App
 * Go to: [https://marketplace.zoom.us/](https://marketplace.zoom.us/) and login
 * On the top right corner, click ***Develop > Build App***
-![](static/zoom_develop_buildapp.png)
+![](media/zoom_develop_buildapp.png)
 * ***Create*** a Webhook Only App
-![](static/zoom_webhook_only.png)
+![](media/zoom_webhook_only.png)
 * Fill the App Information and click Continue
   * App Name
   * Short Description
   * Company Name
   * Developer Name
   * Developer Email Address
-![](static/zoom_webhook_dialog.png)
+![](media/zoom_webhook_dialog.png)
 * Enable ***Event Subscriptions***
-![](static/zoom_event_subscriptions.png)
+![](media/zoom_event_subscriptions.png)
 * Click on ***Add new event subscription*** button
-![](static/zoom_event_addnew.png)
+![](media/zoom_event_addnew.png)
 * Provide the following information
   * Subscription Name (eg: Splunk)
   * Event notification endpoint URL (eg: https://example.com:4443)
-![](static/zoom_event_add_dialog.png)
+![](media/zoom_event_add_dialog.png)
 * Click on ***Add events*** button
-![](static/zoom_add_events_btn.png)
+![](media/zoom_add_events_btn.png)
 * Subscribe to any Webhook Events you wish. For more details, please visit the [Zoom Webhook Reference page](https://marketplace.zoom.us/docs/api-reference/webhook-reference).
-![](static/zoom_event_types.png)
+![](media/zoom_event_types.png)
 * Click ***Save***
-![](static/zoom_save_events.png)
+![](media/zoom_save_events.png)
 * Click ***Continue***
 * Activate your newly created Webhook Only App
-![](static/zoom_activate_app.png)
+![](media/zoom_activate_app.png)
 
 ## Configure the Splunk Remote Workforce App
 * From the Splunk Search Head, go to the ***Remote Workforce*** App
-![](static/remote_workforce_icon.png)
+![](media/remote_workforce_icon.png)
 * Go to ***Settings > Advanced Search > Search Macros*** to update the Index Macros
-![](static/advanced_search.png)
+![](media/advanced_search.png)
 * Update the following indexes macros
   * Authentication: rw_auth_indexes
     * (index=okta)
@@ -198,7 +198,7 @@ This section is only applicable to Zoom Data Collection.
     * (index=zoom)
   * VPN: rw_vpn_indexes
     * (index=pan)
-![](static/search_macros.png)
+![](media/search_macros.png)
 
 # Additional Resources
 
@@ -224,24 +224,26 @@ This section is only applicable to Zoom Data Collection.
 # Appendix
 
 ## Zoom Webhook Data Flow Diagram
-![](static/zoom_workflow.png)
+![](media/zoom_workflow.png)
 
 # Remote Workforce Dashboards
 ## Remote Workforce Home Dashboard
-![](static/remoteWorkforceDashboard.png)
+![](media/remoteWorkforceDashboard.png)
+The first row of the Remote Workforce Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
+
 The combination of VPN, authentication, and video conferencing services will provide insight into the following questions for a remote workforce:
 * Is our remote workforce connected?
 * Are they able to stay productive and run the business? 
 * Are they engaging with each other? 
 
 ## VPN Ops Dashboard
-![](static/vpn_ops_dashboard.png)
+![](media/vpn_ops_dashboard.png)
 The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regional gateways.
 
 ## Zoom Ops Dashboard
-![](static/zoom_ops_dashboard.png)
+![](media/zoom_ops_dashboard.png)
 The top row of the Zoom Ops dashboard displays real time Zoom statistics: number of current active video conferencing sessions, number of active participants, duration of the longest ongoing meeting, average meeting length, and shortest meeting in the last 1 hour. The middle row shows the number of meetings over time by hour and whether meetings are completed in the scheduled amount of time or run over to provide insight into the distribution of activity over the course of a day. The bottom row shows the number of meetings by type and also indicates the distribution of devices that were used to join Zoom.
 
 ## Authentications Ops Dashboard
-![](static/auth_ops_dashboard.png)
+![](media/auth_ops_dashboard.png)
 The top row of the Authentication Ops dashboard provides real time authentication information for applications accessed via Okta: the success rate and the number of authentication attempts over the last hour. The middle row provides these same metrics over the past seven days, and indicates the reasons for failure. The bottom panel indicates the authentication success rate by application.
