@@ -50,7 +50,7 @@ This document provides step by step instructions to install and configure your o
 This section provides you the prerequisites to successfully install the Remote Workforce Dashboards.
 
 ## Splunk Applications
-Download the following apps from Splunkbase.com and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
+Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
 
 * Palo Alto Networks 
   * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
