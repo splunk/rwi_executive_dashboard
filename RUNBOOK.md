@@ -273,6 +273,7 @@ This section is only applicable to Zoom Data Collection.
 * [https://github.com/splunk/jwt_webhook/issues](https://github.com/splunk/jwt_webhook/issues)
 
 ## Zoom References
+* [Zoom Create a Webhook-only App](https://marketplace.zoom.us/docs/guides/getting-started/app-types/create-webhook-only-app)
 * [Zoom Network Firewall or Proxy Server Settings](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom)
 * [Zoom Marketplace](https://marketplace.zoom.us/)
 * [Zoom Webhook Logs](https://marketplace.zoom.us/user/logs?type=WebhookOnly)
