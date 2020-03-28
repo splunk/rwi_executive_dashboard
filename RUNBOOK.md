@@ -1,8 +1,7 @@
 # Remote Workforce - Runbook
 
-# Table of Contents
+## Table of Contents
 
-* [Remote Workforce](#remote-workforce)
 * [Introduction](#introduction)
     * [Example of Remote Workforce Data Collection](#example-of-remote-workforce-data-collection)
 * [Checklist](#checklist)
