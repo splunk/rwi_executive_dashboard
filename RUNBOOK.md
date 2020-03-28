@@ -1,9 +1,9 @@
-# Remote Workforce - Runbook
+# Remote Work Executive Dashboard - Runbook
 
 ## Table of Contents
 
 * [Introduction](#introduction)
-    * [Example of Remote Workforce Data Collection](#example-of-remote-workforce-data-collection)
+    * [Example of Remote Work Data Collection](#example-of-remote-work-data-collection)
 * [Checklist](#checklist)
     * [Splunk Applications](#splunk-applications)
     * [Splunk Infrastructure](#splunk-infrastructure)
@@ -14,40 +14,40 @@
     * [Configure Data Models](#configure-data-models)
     * [Configure Data Collections](#configure-data-collections)
     * [Create Zoom Webhook (Zoom only)](#create-zoom-webhook-zoom-only)
-    * [Configure Remote Workforce Dashboards](#configure-remote-workforce-dashboards)
+    * [Configure Remote Work Executive Dashboard](#configure-remote-work-executive-dashboard)
 * [Zoom Walkthrough](#zoom-walkthrough)
     * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
-    * [Configure the Splunk Remote Workforce Dashboards](#configure-the-splunk-remote-workforce-dashboards)
+    * [Configure the Splunk Remote Work Executive Dashboard](#configure-the-splunk-remote-work-executive-dashboard)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
     * [Zoom References](#zoom-references)
 * [Appendix](#appendix)
     * [Zoom Webhook Data Flow Diagram](#zoom-webhook-data-flow-diagram)
-* [Remote Workforce Dashboards](#remote-workforce-dashboards)
-    * [Remote Workforce Home Dashboard](#remote-workforce-home-dashboard)
+* [Remote Work Executive Dashboard](#remote-work-executive-dashboard)
+    * [Remote Work Executive Home Dashboard](#remote-work-executive-home-dashboard)
     * [VPN Ops Dashboard](#vpn-ops-dashboard)
     * [Zoom Ops Dashboard](#zoom-ops-dashboard)
     * [Authentications Ops Dashboard](#authentications-ops-dashboard)
 
 # Introduction
-The purpose of the Remote Workforce Dashboards is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
+The purpose of the Remote Work Executive Dashboard is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
-![remote work app dashboard](media/remoteWorkforceDashboard.png)
+![remote work app dashboard](media/remoteWorkExecDashboard.png)
 
-**Dashboard Reference**: [Remote Workforce (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [Remote Work Executive Dashboard (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
-This document provides step by step instructions to install and configure your own  Remote Workforce Dashboards. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
+This document provides step by step instructions to install and configure your own Remote Work Executive Dashboard. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
 
-## Example of Remote Workforce Data Collection
+## Example of Remote Work Data Collection
 
 ![data collection flow](media/data_collection_flow.png)
 
 # Checklist
-This section provides you the prerequisites to successfully install the Remote Workforce Dashboards.
+This section provides you the prerequisites to successfully install the Remote Work Executive Dashboard.
 
 ## Splunk Applications
 Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
@@ -96,8 +96,8 @@ In this runbook, you need to complete the following items:
 
 ## Install Splunk Apps
 * Splunk Search Head
-  * Remote Workforce
-    * Remote Workforce Dashboards
+  * Remote Work Executive Dashboard
+  * [Splunk Common Information Model (CIM) Add-on](https://splunkbase.splunk.com/app/1621/)
   * Palo Alto Networks
     * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
     * [Palo Alto Networks App for Splunk](https://splunkbase.splunk.com/app/491/)
@@ -120,6 +120,8 @@ In this runbook, you need to complete the following items:
   * `index=zoom`
 
 ## Configure Data Models
+* Configure the Splunk Common Information Model (CIM) Data Models
+  * Update the [CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints) for `Authentication`, `Network Sessions`, `Network Traffic` data models.
 * Update Palo Alto Networks Firewall Logs Data Model Schema
   * Prefix `index=pan` in the base search
 * Enabled Data Model Acceleration (DMA) (Optional)
@@ -138,7 +140,7 @@ In this runbook, you need to complete the following items:
 * Enable Webhook event subscriptions
 * Activate Zoom App
 
-## Configure Remote Workforce Dashboards
+## Configure Remote Work Executive Dashboard
 * Configure the indexes macros to allow the Dashboards to work as per your environment.
 
 | Category | Macro | Definition |
@@ -239,10 +241,10 @@ This section is only applicable to Zoom Data Collection.
 
 ![](media/zoom_activate_app.png)
 
-## Configure the Splunk Remote Workforce Dashboards
-* From the Splunk Search Head, go to the ***Remote Workforce*** App
+## Configure the Splunk Remote Work Executive Dashboard
+* From the Splunk Search Head, go to the ***Remote Work Executive Dashboard*** App
 
-![](media/remote_workforce_icon.png)
+![](media/remote_work_icon.png)
 
 * Go to ***Settings > Advanced Search > Search Macros*** to update the Index Macros
 
@@ -268,6 +270,8 @@ This section is only applicable to Zoom Data Collection.
 * [Splunkbase](https://splunkbase.splunk.com/)
 * [Splunk Connect for Syslog](https://splunk-connect-for-syslog.readthedocs.io/en/master/gettingstarted/)
 * [Splunk Connect for Syslog - Runbook for redhat 8](https://splunk-connect-for-syslog.readthedocs.io/en/master/gettingstarted/podman-systemd-general/)
+* [Splunk CIM Manual](https://docs.splunk.com/Documentation/CIM/Latest/User/Overview)
+* [Splunk CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints)
 
 ## Splunk JWT Webhook Add-on Support
 * [https://github.com/splunk/jwt_webhook/issues](https://github.com/splunk/jwt_webhook/issues)
@@ -285,13 +289,13 @@ This section is only applicable to Zoom Data Collection.
 ## Zoom Webhook Data Flow Diagram
 ![](media/zoom_workflow.png)
 
-# Remote Workforce Dashboards
-## Remote Workforce Home Dashboard
-![](media/remoteWorkforceDashboard.png)
+# Remote Work Executive Dashboard
+## Remote Work Executive Home Dashboard
+![](media/remoteWorkExecDashboard.png)
 
 **Dashboard Reference**: [rw_exec.xml](default/data/ui/views/rw_exec.xml)
 
-The first row of the Remote Workforce Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
+The first row of the Remote Work Executive Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
 
 The combination of VPN, authentication, and video conferencing services will provide insight into the following questions for a remote workforce:
 * Is our remote workforce connected?

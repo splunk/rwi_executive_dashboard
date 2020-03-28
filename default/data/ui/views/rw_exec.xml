@@ -1,5 +1,5 @@
 <form theme="dark" hideFilters="true" stylesheet="style.css">
-  <label>Remote Workforce</label>
+  <label>Remote Work Executive Dashboard</label>
   <fieldset submitButton="false">
     <input type="time" token="time" searchWhenChanged="true">
       <label>Time</label>
@@ -14,7 +14,7 @@
       <single>
         <title>Active VPN Sessions</title>
         <search>
-          <query>| tstats summariesonly=f dc(log.user) FROM datamodel="pan_firewall" groupby _time span=1m</query>
+          <query>| tstats dc(All_Sessions.user) from datamodel=Network_Sessions where `rw_vpn_indexes` nodename=All_Sessions.VPN</query>
           <earliest>-1h</earliest>
           <latest>now</latest>
           <sampleRatio>1</sampleRatio>
@@ -34,7 +34,7 @@
         <option name="trendColorInterpretation">standard</option>
         <option name="trendDisplayMode">absolute</option>
         <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
+        <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
           <link target="_blank">/app/remote_workforce/rw_vpn_gp_logins</link>
@@ -69,7 +69,7 @@
         <option name="trendColorInterpretation">standard</option>
         <option name="trendDisplayMode">absolute</option>
         <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
+        <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
           <link target="_blank">/app/remote_workforce/rw_vc_zoom_ops</link>
@@ -87,8 +87,9 @@
           <done>
             <eval token="app_unique_count">tostring($result.unique_users$,"commas")</eval>
           </done>
-          <query>`rw_auth_indexes` sourcetype="OktaIM2:log" TERM(SUCCESS) TERM(outcome) TERM(result) "outcome.result"=SUCCESS app=* 
-| stats dc(actor.id) as unique_users by app
+          <query>| tstats prestats=t dc(Authentication.user) from datamodel=Authentication where `rw_auth_indexes` nodename=Authentication.Successful_Authentication by Authentication.app sourcetype
+| where 'Authentication.app'!=sourcetype
+| stats dc(Authentication.user) as unique_users by Authentication.app
 | sort 1 - unique_users</query>
           <earliest>@d</earliest>
           <latest>now</latest>
@@ -98,6 +99,7 @@
         <option name="colorMode">none</option>
         <option name="drilldown">all</option>
         <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">1</option>
         <option name="showTrendIndicator">1</option>
@@ -106,9 +108,9 @@
         <option name="trellis.size">medium</option>
         <option name="trendColorInterpretation">standard</option>
         <option name="trendDisplayMode">absolute</option>
-        <option name="underLabel">Accessed via OKTA: $app_unique_count$ Unique Users</option>
+        <option name="underLabel">$app_unique_count$ Unique Users Accessed the App Today</option>
         <option name="unitPosition">after</option>
-        <option name="useColors">1</option>
+        <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
           <link target="_blank">/app/remote_workforce/rw_auth_okta_app_activities</link>
@@ -116,7 +118,7 @@
       </single>
       <html>
         <b>Description:</b>
-        Most popular apps accessed via Okta.
+        Most popular apps accessed today.
       </html>
     </panel>
   </row>
@@ -125,20 +127,10 @@
       <chart>
         <title>Number of VPN Logins</title>
         <search>
-          <query>`rw_vpn_indexes` globalprotectportal-auth-* 
-| eval auth_status=case(event_id LIKE "globalprotectportal-auth-succ", "success", event_id LIKE "globalprotectportal-auth-fail", "fail", 1==1, "unknown") 
-| rex field=_raw "(?&lt;user&gt;(?&lt;=\ User name:\s)(\w+))" 
-| rex field=_raw "(?&lt;failure_reason&gt;(?&lt;=\ Reason:\s)([^,]+))" 
-| rex field=_raw "(?&lt;clientip&gt;(?&lt;=\ Login from:\s)(\d*.\d*.\d*.\d*))" 
-| eval failure_reason=case(auth_status LIKE "success", "N/A", 1==1, failure_reason) 
-| iplocation clientip 
-| fillnull value="*Unknown" failure_reason 
-| eval City = if(isnull(City) OR City="", "*Unknown", City) 
-| fields _time user auth_status failure_reason clientip, City, Country 
-| search Country="*" City="*" 
-| timechart span=1d dc(user) by auth_status 
-| eval "Success Rate %"=success/(success+fail)*100
-| rename fail as "Failure", success as "Success"</query>
+          <query>| tstats prestats=t count from datamodel=Authentication where `rw_vpn_indexes` by _time Authentication.action span=1d
+| timechart span=1d count by Authentication.action
+| eval "Success Rate %" = round(success/(success+failure)*100,2)
+| rename failure as "Failure", success as "Success"</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -242,10 +234,11 @@
     </panel>
     <panel>
       <chart>
-        <title>Top Apps (via OKTA)</title>
+        <title>Top Apps</title>
         <search>
-          <query>`rw_auth_indexes` sourcetype="OktaIM2:log" TERM(SUCCESS) TERM(outcome) TERM(result) "outcome.result"=SUCCESS app=* 
-| timechart useother=false limit=10 span=1d dc(actor.id) as unique_users by app</query>
+          <query>| tstats prestats=t dc(Authentication.user) from datamodel=Authentication where `rw_auth_indexes` nodename=Authentication.Successful_Authentication by _time Authentication.app sourcetype
+| where 'Authentication.app'!=sourcetype
+| timechart useother=false limit=10 span=1d dc(Authentication.user) as unique_users by Authentication.app</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -285,7 +278,7 @@
       </chart>
       <html>
         <b>Description:</b>
-        Top applications accessed via Okta over time.
+        Top applications accessed over time.
       </html>
     </panel>
   </row>
@@ -294,12 +287,10 @@
       <map>
         <title>Connected Workforce by Location</title>
         <search>
-          <query>| tstats summariesonly=f values(log.src_ip) AS log.src_ip FROM datamodel="pan_firewall" WHERE nodename="log.system.globalprotect" log.event_id="globalprotectportal-auth-succ" OR log.event_id="globalprotectportal-auth-fail" groupby _time log.event_id log.user
-| rename log.* as *
-| iplocation src_ip 
-| search Country="*" City="*" 
-| geostats count by event_id
-| rename globalprotectportal-auth-fail as failure, "globalprotectportal-auth-succ" as success</query>
+          <query>| tstats dc(Authentication.user) from datamodel=Authentication where `rw_vpn_indexes` by Authentication.action Authentication.src
+| iplocation Authentication.src 
+| where len(Country)&gt;0 AND len(City)&gt;0
+| geostats count by Authentication.action</query>
           <earliest>-1h</earliest>
           <latest>@h</latest>
           <sampleRatio>1</sampleRatio>

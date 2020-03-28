@@ -1,15 +1,11 @@
 <form theme="dark" stylesheet="style.css">
-  <label>Global Protect VPN Login Activities</label>
+  <label>VPN Ops</label>
   <search id="bs1">
     <query>
       <![CDATA[
-        | tstats summariesonly=f values(log.src_ip) as log.src_ip values(log.description) as log.description FROM datamodel="pan_firewall" WHERE nodename="log.system.globalprotect" log.event_id="globalprotectportal-auth-succ" OR log.event_id="globalprotectportal-auth-fail" groupby _time log.event_id log.user span=1s
-        | rename log.* as *
-        | replace "globalprotectportal-auth-fail" with "failure" in event_id
-        | replace "globalprotectportal-auth-succ" with "success" in event_id
-        | rex field=description "(?<failure_reason>(?<=\ Reason:\s)([^,]+))"
+        | tstats values(Authentication.src) as src_ip from datamodel=Authentication where `rw_vpn_indexes` by _time Authentication.action Authentication.user span=1s
+        | rename Authentication.* as *
         | iplocation src_ip
-        | fillnull value="*Unknown" failure_reason 
         | eval City = if(isnull(City) OR City="", "*Unknown", City) 
         | search $Country$ $City$
       ]]>
@@ -56,7 +52,7 @@
       <map>
         <title>Connected Workforce by Location</title>
         <search base="bs1">
-          <query>| geostats count by event_id</query>
+          <query>| geostats count by action</query>
         </search>
         <option name="drilldown">all</option>
         <option name="mapping.choroplethLayer.colorBins">5</option>
@@ -79,6 +75,7 @@
         <option name="mapping.tileLayer.minZoom">0</option>
         <option name="mapping.tileLayer.tileOpacity">1</option>
         <option name="mapping.type">marker</option>
+        <option name="refresh.display">progressbar</option>
       </map>
       <html>
         <b>Description:</b> This map shows where our Workers are connecting from.
@@ -132,8 +129,7 @@
       <chart>
         <title>Logins by Success/Failure</title>
         <search base="bs1">
-          <query>| stats count by event_id
-| rename event_id as auth_status</query>
+          <query>| stats count by action</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -161,36 +157,13 @@
         <option name="refresh.display">progressbar</option>
       </chart>
     </panel>
-    <panel>
-      <chart>
-        <title>Reasons for login failure</title>
-        <search base="bs1">
-          <query>| stats count by failure_reason</query>
-        </search>
-        <option name="charting.chart">pie</option>
-        <option name="refresh.display">progressbar</option>
-      </chart>
-    </panel>
   </row>
   <row>
     <panel>
       <chart>
         <title>Successful vs Failed Logins</title>
-        <search>
-          <query>| tstats summariesonly=f values(log.src_ip) as log.src_ip values(log.description) as log.description 
-    FROM datamodel="pan_firewall" 
-    WHERE nodename="log.system.globalprotect" 
-    log.event_id IN ("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ","globalprotectgateway-auth-fail","globalprotectgateway-regist-fail","globalprotectportal-auth-fail","globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ")
-    log.description!="*Invalid username*" log.description!="*Internal okta*" log.description!="Existing user session found"
-    by _time log.event_id log.user span=1s 
-| rename log.* as * 
-| eval success = if(event_id IN("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ"),1,0), 
-    failure = if(event_id IN("globalprotectgateway-auth-fail","globalprotectgateway-regist-fail","globalprotectportal-auth-fail"),1,0) 
-| eval user = if(event_id IN("globalprotectgateway-auth-succ","globalprotectgateway-regist-succ","globalprotectportal-auth-succ"),user,null()) 
-| timechart sum(success) as success sum(failure) as failure dc(user) as unique_users</query>
-          <earliest>$time.earliest$</earliest>
-          <latest>$time.latest$</latest>
-          <sampleRatio>1</sampleRatio>
+        <search base="bs1">
+          <query>| timechart dc(user) as "Unique Users" count(eval(action="success")) as Success count(eval(action="failure")) as Failure</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -211,7 +184,7 @@
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
         <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.overlayFields">unique_users</option>
+        <option name="charting.chart.overlayFields">"Unique Users"</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">stacked</option>
@@ -231,17 +204,9 @@
     </panel>
     <panel>
       <chart>
-        <title>Unique Users by Global Protect Gateway</title>
-        <search>
-          <query>| tstats summariesonly=f prestats=t dc(log.src_ip) 
-    FROM datamodel="pan_firewall" 
-    WHERE nodename="log.system.globalprotect" 
-    log.description!="*Invalid username*" log.description!="*Internal okta*" log.description!="Existing user session found"
-    by _time log.object span=30m
-| timechart span=30m dc(log.src_ip) as unique_users by log.object</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
-          <sampleRatio>1</sampleRatio>
+        <title>Unique Users by Country</title>
+        <search base="bs1">
+          <query>| timechart dc(user) as "Unique Users" by Country</query>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
@@ -283,8 +248,8 @@
       <table>
         <title>Login Details</title>
         <search base="bs1">
-          <query>| fields _time user event_id failure_reason src_ip City Country
-| rename user as User, event_id as Status, failure_reason as "Failure Reason", src_ip as "Source IP"
+          <query>| fields _time user action src_ip City Country
+| rename user as User, action as Status, src_ip as "Source IP"
 | sort - _time</query>
         </search>
         <option name="count">5</option>

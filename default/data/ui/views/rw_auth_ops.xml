@@ -57,10 +57,10 @@
   <row>
     <panel>
       <chart>
-        <title>Authentication Success Rate</title>
+        <title>Authentication Success Rate Over Time</title>
         <search id="bs1">
-          <query>`rw_auth_indexes` sourcetype="OktaIM2:log" action=success OR action=failure
-| timechart partial=f span=1h dc(user) by action
+          <query>| tstats prestats=t dc(Authentication.user) as count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.action IN("success","failure") by _time Authentication.action
+| timechart partial=f span=1h dc(Authentication.user) by Authentication.action
 | addtotals
 | eval "Success%" = round(success / Total * 100,2)
 | fields - Total
@@ -86,16 +86,17 @@
     </panel>
     <panel>
       <chart>
-        <title>Authentication Failure Reasons</title>
+        <title>Authentication Failure Reasons Over Time</title>
         <search>
-          <query>index=okta sourcetype="OktaIM2:log" action=failure 
-| timechart span=1h count by outcome.reason limit=0</query>
+          <query>| tstats prestats=t count from datamodel=Authentication where `rw_auth_indexes` nodename=Authentication.Failed_Authentication Authentication.action=failure by _time Authentication.signature
+| timechart span=1h count by Authentication.signature limit=0</query>
           <earliest>-7d@h</earliest>
           <latest>now</latest>
         </search>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.chart">line</option>
         <option name="charting.drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
       </chart>
       <html>
         <b>Description:</b> Is there anything abnormal on the Authentication Failure Reasons? Any new spikes for specific failures should be investigated.
@@ -107,12 +108,12 @@
       <table>
         <title>Application Authentication Success Rate Below 100% for Today</title>
         <search>
-          <query>`rw_auth_indexes` sourcetype="OktaIM2:log" action=success OR action=failure app=*
-| chart count by app action
+          <query>| tstats prestats=t count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.app!=OktaIM2:log Authentication.action IN("success","failure") by Authentication.app Authentication.action
+| chart count by Authentication.app Authentication.action
 | addtotals
 | eval "Success%" = round(success / Total * 100,2)
 | fields - Total
-| rename failure as "Failure", success as "Success", app as Application
+| rename failure as "Failure", success as "Success"
 | where 'Success%' &lt; 100
 | sort + "Success%"</query>
           <earliest>@d</earliest>
@@ -123,6 +124,7 @@
         <option name="dataOverlayMode">none</option>
         <option name="drilldown">cell</option>
         <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
         <option name="rowNumbers">true</option>
         <option name="totalsRow">false</option>
         <option name="wrap">true</option>
