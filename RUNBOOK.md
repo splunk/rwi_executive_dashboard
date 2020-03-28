@@ -52,25 +52,27 @@ This section provides you the prerequisites to successfully install the Remote W
 ## Splunk Applications
 Download the following apps from Splunkbase.com and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
 
-* Remote Workforce Dashboards
 * Palo Alto Networks 
   * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
   * [Palo Alto Networks App for Splunk](https://splunkbase.splunk.com/app/491/)
 * Okta 
-  * [Splunk Add-on for Okta](https://splunkbase.splunk.com/app/2806/)
   * [Okta Identity Cloud Add-on for Splunk](https://splunkbase.splunk.com/app/3682/)
 * Zoom
   * [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook)
 
 ## Splunk Infrastructure
-* Single Instance
-  * Any Splunk Enterprise version 7.3 or higher
-    * For more information about which Splunk Deployment si right for you see [About Splunk Enterprise deployments](https://docs.splunk.com/Documentation/Splunk/8.0.2/Overview/AboutSplunkEnterprisedeployments)
+* Standalone Splunk Instance
+  * Any Splunk Enterprise or Splunk Cloud version 7.3 or higher
+    * For more information about which Splunk Deployment is right for you see [About Splunk Enterprise deployments](https://docs.splunk.com/Documentation/Splunk/8.0.2/Overview/AboutSplunkEnterprisedeployments)
 
 **OR**
-* Distributed Splunk Deployment + Splunk Heavy Forwarder
-  * Any full version Splunk Enterprise version 7.3 or higher that will act as an independent forwarding agent for your Zoom and OKTA data source
+* Distributed Splunk Deployment + Splunk Heavy Forwarder (HF)
+  * Any full version Splunk Enterprise version 7.3 or higher with a HF that will act as an independent forwarding agent for your Zoom and/or Okta data source
   * Network and OS Firewall whitelist permissions
+
+**OR**
+* Splunk Cloud Environment with an Input Data Manager (IDM) instance
+  * Splunk Cloud version 7.3 or higher with an IDM that will act as an independent forwarding agent for your Okta data source
 
 **AND**
 * Syslog server for Palo Alto TA
@@ -78,11 +80,11 @@ Download the following apps from Splunkbase.com and deploy them according to you
     * [Splunk Connect for Syslog](https://splunk-connect-for-syslog.readthedocs.io/en/master/gettingstarted/)
       * [Runbook for Redhat 8](https://splunk-connect-for-syslog.readthedocs.io/en/master/gettingstarted/podman-systemd-general/)
 
-
 ## Permissions Requirements
 * Splunk Environment
   * Splunk admin account with ability to install/configure apps and create indexes
-  * Splunk CLI (Command Line) access
+  * Splunk CLI (Command Line) access (only required for the JWT Modular Input Add-on)
+  * HTTP Event Collector (HEC) Token used by Splunk Connect for Syslog
 * Zoom Environment
   * Zoom administrator or developer account
   * Zoom permissions to create and activate a Zoom App
@@ -106,7 +108,8 @@ In this runbook, you need to complete the following items:
     * [Okta Identity Cloud Add-on for Splunk](https://splunkbase.splunk.com/app/3682/)
   * Zoom
     * [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook)
-
+* Syslog
+    * [Splunk Connect for Syslog](https://splunkbase.splunk.com/app/4740)
 
 ## Create Splunk Indexes
 * Palo Alto Networks
@@ -123,7 +126,6 @@ In this runbook, you need to complete the following items:
   * Palo Alto Networks Add-on for Splunk
     * Palo Alto Networks Firewall Logs
 
-
 ## Configure Data Collections
 * Okta
   * Configure Okta Identity Cloud Add-on for Splunk and collecting Okta events
@@ -132,7 +134,7 @@ In this runbook, you need to complete the following items:
     * Step by step instructions included in this section: [Configure Splunk JWT Webhook Modular Input Add-On](#Configure-Splunk-JWT-Webhook-Modular-Input-Add-On)
 
 ## Create Zoom Webhook (Zoom only)
-* Zoom Webhook Only App created
+* Create Zoom Webhook Only App
 * Enable Webhook event subscriptions
 * Activate Zoom App
 
@@ -145,18 +147,17 @@ In this runbook, you need to complete the following items:
 | Video Conferencing | rw_vc_indexes | (index=zoom) |
 | VPN | rw_vpn_indexes | (index=pan) |
 
-
 # Zoom Walkthrough
 
 ## Configure Splunk JWT Webhook Modular Input Add-on
 This section is only applicable to Zoom Data Collection.
 
-* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator to whitelist the following network subnets. For more details on [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) and feel free to contact the Zoom directly for additional assistance.
-    * 18.205.93.128/25
-    * 52.202.62.192/26
-    * 3.80.20.128/25
-    * 3.208.72.0/25
-    * 3.211.241.0/25
+* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator to whitelist the following network subnets. For more details, please visit the [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) documentation and feel free to contact Zoom support directly for additional assistance.
+    * `18.205.93.128/25`
+    * `52.202.62.192/26`
+    * `3.80.20.128/25`
+    * `3.208.72.0/25`
+    * `3.211.241.0/25`
 * Install [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook) on a Splunk Heavy Forwarder (Single Instance Deployments can use the same instance)
 * From the Splunk Web Interface, go to **Settings > Data Inputs**
 ![](media/data_input.png)
@@ -164,7 +165,7 @@ This section is only applicable to Zoom Data Collection.
 ![](media/jwt_webhook.png)
 * Fill the parameters as per the table below or you may enter specific value as per your environment. 
 **Note:**
-* The JWT Webhook Add-On leverages the default Splunk Web self-signed certificate and private key as described here: [About securing Splunk Enterprise with SSL](https://docs.splunk.com/Documentation/Splunk/latest/Security/AboutsecuringyourSplunkconfigurationwithSSL). For security reasons and best practices, it is recommended to use Trusted CA Signed SSL Certificates. You may follow this documentation to assist you with generating the needed certificates for your trusted CA: [How to get certificates signed by a third-party](https://docs.splunk.com/Documentation/Splunk/latest/Security/Howtogetthird-partycertificates). 
+* The JWT Webhook Add-On uses the default Splunk Web self-signed certificate and private key as described here: [About securing Splunk Enterprise with SSL](https://docs.splunk.com/Documentation/Splunk/latest/Security/AboutsecuringyourSplunkconfigurationwithSSL). For security reasons and best practices, it is recommended to use a Trusted CA Signed SSL Certificates. You may follow this documentation to assist you with generating the needed certificates for your trusted CA: [How to get certificates signed by a third-party](https://docs.splunk.com/Documentation/Splunk/latest/Security/Howtogetthird-partycertificates). 
 * For the purpose of this document, we will use the default certificates that were shipped with Splunk to help you understand the setup process. The default certificates are located here
   * `$SPLUNK_HOME/etc/auth/splunkweb/cert.pem`
   * `$SPLUNK_HOME/etc/auth/splunkweb/privkey.pem`
