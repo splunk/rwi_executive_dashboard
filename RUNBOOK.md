@@ -14,11 +14,11 @@
     * [Configure Data Models](#configure-data-models)
     * [Configure Data Collections](#configure-data-collections)
     * [Create Zoom Webhook (Zoom only)](#create-zoom-webhook-zoom-only)
-    * [Configure Remote Workforce App](#configure-remote-workforce-app)
+    * [Configure Remote Workforce Dashboards](#configure-remote-workforce-dashboards)
 * [Zoom Walkthrough](#zoom-walkthrough)
     * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
-    * [Configure the Splunk Remote Workforce App](#configure-the-splunk-remote-workforce-app)
+    * [Configure the Splunk Remote Workforce Dashboards](#configure-the-splunk-remote-workforce-dashboards)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
@@ -136,14 +136,14 @@ In this runbook, you need to complete the following items:
 * Enable Webhook event subscriptions
 * Activate Zoom App
 
-## Configure Remote Workforce App
-* Configure indexes macros
-  * Authentication: rw_auth_indexes
-    * Eg: (index=okta)
-  * Video Conferencing: rw_vc_indexes
-    * Eg: (index=zoom)
-  * VPN: rw_vpn_indexes
-    * Eg: (index=pan)
+## Configure Remote Workforce Dashboards
+* Configure the indexes macros to allow the Dashboards to work as per your environment.
+
+| Category | Macro | Definition |
+| --- | --- | --- |
+| Authentication | rw_auth_indexes | (index=okta) |
+| Video Conferencing | rw_vc_indexes | (index=zoom) |
+| VPN | rw_vpn_indexes | (index=pan) |
 
 
 # Zoom Walkthrough
@@ -238,7 +238,7 @@ This section is only applicable to Zoom Data Collection.
 
 ![](media/zoom_activate_app.png)
 
-## Configure the Splunk Remote Workforce App
+## Configure the Splunk Remote Workforce Dashboards
 * From the Splunk Search Head, go to the ***Remote Workforce*** App
 
 ![](media/remote_workforce_icon.png)
