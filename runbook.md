@@ -34,12 +34,12 @@ Download the following apps from Splunkbase.com and deploy them according to you
   * Any Splunk Enterprise version 7.3 or higher
     * For more information about which Splunk Deployment si right for you see [About Splunk Enterprise deployments](https://docs.splunk.com/Documentation/Splunk/8.0.2/Overview/AboutSplunkEnterprisedeployments)
 
-*OR*
+**OR**
 * Distributed Splunk Deployment + Splunk Heavy Forwarder
   * Any full version Splunk Enterprise version 7.3 or higher that will act as an independent forwarding agent for your Zoom and OKTA data source
   * Network and OS Firewall whitelist permissions
 
-*AND*
+**AND**
 * Syslog server for Palo Alto TA
   * For more information on how to configure syslog
     * [Splunk Connect for Syslog](https://splunk-connect-for-syslog.readthedocs.io/en/master/gettingstarted/)
@@ -77,15 +77,15 @@ In this runbook, you need to complete the following items:
 
 ## Create Splunk Indexes
 * Palo Alto Networks
-  * index=pan
+  * `index=pan`
 * Okta
-  * index=okta
+  * `index=okta`
 * Zoom
-  * index=zoom
+  * `index=zoom`
 
 ## Configure Data Models
 * Update Palo Alto Networks Firewall Logs Data Model Schema
-  * Prefix index=pan in the base search
+  * Prefix `index=pan` in the base search
 * Enabled Data Model Acceleration (DMA) (Optional)
   * Palo Alto Networks Add-on for Splunk
     * Palo Alto Networks Firewall Logs
@@ -116,8 +116,89 @@ In this runbook, you need to complete the following items:
 # Zoom Walkthrough
 
 ## Configure Splunk JWT Webhook Modular Input Add-on
+This section is only applicable to Zoom Data Collection.
+
+* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator to whitelist the following network subnets
+  * 18.205.93.128/25
+  * 52.202.62.192/26
+  * 3.80.20.128/25
+  * 3.208.72.0/25
+  * 3.211.241.0/25
+  * More details on [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) and feel free to contact the Zoom directly for additional assistance.|
+* Install [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook) on a Splunk Heavy Forwarder (Single Instance Deployments can use the same instance) |
+* From the Splunk Web Interface, go to **Settings > Data Inputs**
+![](static/data_input.png)
+* Click **Add New** for the **JWT Webhook** input
+![](static/jwt_webhook.png)
+* Fill the parameters as per the table below or you may enter specific value as per your environment. 
+**Note:**
+* The JWT Webhook Add-On leverages the default Splunk Web self-signed certificate and private key as described here: [About securing Splunk Enterprise with SSL](https://docs.splunk.com/Documentation/Splunk/latest/Security/AboutsecuringyourSplunkconfigurationwithSSL). For security reasons and best practices, it is recommended to use Trusted CA Signed SSL Certificates. You may follow this documentation to assist you with generating the needed certificates for your trusted CA: [How to get certificates signed by a third-party](https://docs.splunk.com/Documentation/Splunk/latest/Security/Howtogetthird-partycertificates). 
+* For the purpose of this document, we will use the default certificates that were shipped with Splunk to help you understand the setup process. The default certificates are located here
+  * `$SPLUNK_HOME/etc/auth/splunkweb/cert.pem`
+  * `$SPLUNK_HOME/etc/auth/splunkweb/privkey.pem`
+* If you wish to use your own SSL certificates, we recommend storing your certificate and private key in the following directory: `$SPLUNK_HOME/etc/auth/<your_folder>`
+
+| Parameter | Value |
+| --- | --- |
+| Name | Zoom |
+| Secret | Leave Empty |
+| Port| 4443 |
+| Path | Leave Empty |
+| SSL Certificate File | etc/auth/splunkweb/cert.pem |
+| SSL Certificate Key File | etc/auth/splunkweb/privkey.pem |
+| Password | Leave Empty |
+| Set sourcetype | Manual |
+| Sourcetype | zoom:webhook |
+| Host | Leave as is |
+| Index | zoom |
+![](static/add_data_dialog.png)
+* Click the ***Next*** button and this should complete the Input setup.
+![](static/add_data_dialog_focus.png)
 
 ## Create Zoom Webhook Only App
+* Go to: [https://marketplace.zoom.us/](https://marketplace.zoom.us/) and login
+* On the top right corner, click ***Develop > Build App***
+![](static/zoom_develop_buildapp.png)
+* ***Create*** a Webhook Only App
+![](static/zoom_webhook_only.png)
+* Fill the App Information and click Continue
+  * App Name
+  * Short Description
+  * Company Name
+  * Developer Name
+  * Developer Email Address
+![](static/zoom_webhook_dialog.png)
+* Enable ***Event Subscriptions***
+![](static/zoom_event_subscriptions.png)
+* Click on ***Add new event subscription*** button
+![](static/zoom_event_addnew.png)
+* Provide the following information
+  * Subscription Name (eg: Splunk)
+  * Event notification endpoint URL (eg: https://example.com:4443)
+![](static/zoom_event_add_dialog.png)
+* Click on ***Add events*** button
+![](static/zoom_add_events_btn.png)
+* Subscribe to any Webhook Events you wish. For more details, please visit the [Zoom Webhook Reference page](https://marketplace.zoom.us/docs/api-reference/webhook-reference).
+![](static/zoom_event_types.png)
+* Click ***Save***
+![](static/zoom_save_events.png)
+* Click ***Continue***
+* Activate your newly created Webhook Only App
+![](static/zoom_activate_app.png)
+
+## Configure the Splunk Remote Workforce App
+* From the Splunk Search Head, go to the ***Remote Workforce*** App
+![](static/remote_workforce_icon.png)
+* Go to ***Settings > Advanced Search > Search Macros*** to update the Index Macros
+![](static/advanced_search.png)
+* Update the following indexes macros
+  * Authentication: rw_auth_indexes
+    * (index=okta)
+  * Video Conferencing: rw_vc_indexes
+    * (index=zoom)
+  * VPN: rw_vpn_indexes
+    * (index=pan)
+![](static/search_macros.png)
 
 # Additional Resources
 
@@ -143,14 +224,24 @@ In this runbook, you need to complete the following items:
 # Appendix
 
 ## Zoom Webhook Data Flow Diagram
+![](static/zoom_workflow.png)
 
 # Remote Workforce Dashboards
-
 ## Remote Workforce Home Dashboard
+![](static/remoteWorkforceDashboard.png)
+The combination of VPN, authentication, and video conferencing services will provide insight into the following questions for a remote workforce:
+* Is our remote workforce connected?
+* Are they able to stay productive and run the business? 
+* Are they engaging with each other? 
 
 ## VPN Ops Dashboard
+![](static/vpn_ops_dashboard.png)
+The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regional gateways.
 
 ## Zoom Ops Dashboard
+![](static/zoom_ops_dashboard.png)
+The top row of the Zoom Ops dashboard displays real time Zoom statistics: number of current active video conferencing sessions, number of active participants, duration of the longest ongoing meeting, average meeting length, and shortest meeting in the last 1 hour. The middle row shows the number of meetings over time by hour and whether meetings are completed in the scheduled amount of time or run over to provide insight into the distribution of activity over the course of a day. The bottom row shows the number of meetings by type and also indicates the distribution of devices that were used to join Zoom.
 
 ## Authentications Ops Dashboard
-
+![](static/auth_ops_dashboard.png)
+The top row of the Authentication Ops dashboard provides real time authentication information for applications accessed via Okta: the success rate and the number of authentication attempts over the last hour. The middle row provides these same metrics over the past seven days, and indicates the reasons for failure. The bottom panel indicates the authentication success rate by application.
