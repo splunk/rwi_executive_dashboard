@@ -216,12 +216,12 @@ This section is only applicable to Zoom Data Collection.
 ![](media/advanced_search.png)
 
 * Update the following indexes macros
-  * Authentication: rw_auth_indexes
-    * (index=okta)
-  * Video Conferencing: rw_vc_indexes
-    * (index=zoom)
-  * VPN: rw_vpn_indexes
-    * (index=pan)
+
+| Category | Macro | Definition |
+| --- | --- | --- |
+| Authentication | rw_auth_indexes | (index=okta) |
+| Video Conferencing | rw_vc_indexes | (index=zoom) |
+| VPN | rw_vpn_indexes | (index=pan) |
 
 ![](media/search_macros.png)
 
