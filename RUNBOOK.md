@@ -52,6 +52,8 @@ This section provides you the prerequisites to successfully install the Remote W
 ## Splunk Applications
 Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
 
+* Splunk
+  * [Splunk Common Information Model (CIM) Add-on](https://splunkbase.splunk.com/app/1621/)
 * Palo Alto Networks 
   * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
   * [Palo Alto Networks App for Splunk](https://splunkbase.splunk.com/app/491/)

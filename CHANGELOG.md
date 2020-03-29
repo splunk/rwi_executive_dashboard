@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `props.conf`: New search-time fields
-    - Okta [OktaIM2:log]: signature field
+    - Okta [OktaIM2:log]: signature
     - PAN [pan:system]: action, src
 - `eventtypes.conf` 
 	- PAN: New eventtypes for Global Protect to Map to Network Sessions and Authentication Data Models
