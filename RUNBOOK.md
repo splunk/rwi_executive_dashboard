@@ -309,7 +309,7 @@ The combination of VPN, authentication, and video conferencing services will pro
 
 **Dashboard Reference**: [rw_vpn_gp_logins.xml](default/data/ui/views/rw_vpn_gp_logins.xml)
 
-The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regional gateways.
+The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regions.
 
 ## Zoom Ops Dashboard
 ![](media/zoom_ops_dashboard.png)
