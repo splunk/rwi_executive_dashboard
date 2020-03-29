@@ -29,7 +29,7 @@
     * [Remote Work Executive Home Dashboard](#remote-work-executive-home-dashboard)
     * [VPN Ops Dashboard](#vpn-ops-dashboard)
     * [Zoom Ops Dashboard](#zoom-ops-dashboard)
-    * [Authentications Ops Dashboard](#authentications-ops-dashboard)
+    * [Authentication Ops Dashboard](#authentication-ops-dashboard)
 
 # Introduction
 The purpose of the Remote Work Executive Dashboard is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
@@ -318,7 +318,7 @@ The top panel of the VPN Ops Dashboard shows successful and failed login attempt
 
 The top row of the Zoom Ops dashboard displays real time Zoom statistics: number of current active video conferencing sessions, number of active participants, duration of the longest ongoing meeting, average meeting length, and shortest meeting in the last 1 hour. The middle row shows the number of meetings over time by hour and whether meetings are completed in the scheduled amount of time or run over to provide insight into the distribution of activity over the course of a day. The bottom row shows the number of meetings by type and also indicates the distribution of devices that were used to join Zoom.
 
-## Authentications Ops Dashboard
+## Authentication Ops Dashboard
 ![](media/auth_ops_dashboard.png)
 
 **Dashboard Reference**: [rw_auth_ops.xml](default/data/ui/views/rw_auth_ops.xml)
