@@ -1,9 +1,9 @@
-# Remote Work Executive Dashboard - Runbook
+# Remote Work Insights (RWI) - Executive Dashboard: Runbook
 
 ## Table of Contents
 
 * [Introduction](#introduction)
-    * [Example of Remote Work Data Collection](#example-of-remote-work-data-collection)
+    * [Example of Remote Work Insights Data Collection](#example-of-remote-work-insights-data-collection)
 * [Checklist](#checklist)
     * [Splunk Applications](#splunk-applications)
     * [Splunk Infrastructure](#splunk-infrastructure)
@@ -14,40 +14,40 @@
     * [Configure Data Models](#configure-data-models)
     * [Configure Data Collections](#configure-data-collections)
     * [Create Zoom Webhook (Zoom only)](#create-zoom-webhook-zoom-only)
-    * [Configure Remote Work Executive Dashboard](#configure-remote-work-executive-dashboard)
+    * [Configure RWI - Executive Dashboard](#configure-rwi-executive-dashboard)
 * [Zoom Walkthrough](#zoom-walkthrough)
     * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
-    * [Configure the Splunk Remote Work Executive Dashboard](#configure-the-splunk-remote-work-executive-dashboard)
+    * [Configure the Splunk Remote Work Insights Executive Dashboard](#configure-the-splunk-remote-work-insights-executive-dashboard)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
     * [Zoom References](#zoom-references)
 * [Appendix](#appendix)
     * [Zoom Webhook Data Flow Diagram](#zoom-webhook-data-flow-diagram)
-* [Remote Work Executive Dashboard](#remote-work-executive-dashboard)
-    * [Remote Work Executive Home Dashboard](#remote-work-executive-home-dashboard)
+* [Remote Work Insights Executive Dashboard](#remote-work-insights-executive-dashboard)
+    * [Remote Work Insights Executive Home Dashboard](#remote-work-insights-executive-home-dashboard)
     * [VPN Ops Dashboard](#vpn-ops-dashboard)
     * [Zoom Ops Dashboard](#zoom-ops-dashboard)
     * [Authentication Ops Dashboard](#authentication-ops-dashboard)
 
 # Introduction
-The purpose of the Remote Work Executive Dashboard is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
+The purpose of the **Remote Work Insights - Executive Dashboard** is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
 ![remote work app dashboard](media/remoteWorkExecDashboard.png)
 
-**Dashboard Reference**: [Remote Work Executive Dashboard (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [Remote Work Insights - Executive Dashboard (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
-This document provides step by step instructions to install and configure your own Remote Work Executive Dashboard. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
+This document provides step by step instructions to install and configure your own *Remote Work Insights Executive Dashboard*. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
 
-## Example of Remote Work Data Collection
+## Example of Remote Work Insights Data Collection
 
 ![data collection flow](media/data_collection_flow.png)
 
 # Checklist
-This section provides you the prerequisites to successfully install the Remote Work Executive Dashboard.
+This section provides you the prerequisites to successfully install the *Remote Work Insights - Executive Dashboard*.
 
 ## Splunk Applications
 Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
@@ -142,7 +142,7 @@ In this runbook, you need to complete the following items:
 * Enable Webhook event subscriptions
 * Activate Zoom App
 
-## Configure Remote Work Executive Dashboard
+## Configure Remote Work Insights - Executive Dashboard
 * Configure the indexes macros to allow the Dashboards to work as per your environment.
 
 | Category | Macro | Definition |
@@ -243,8 +243,8 @@ This section is only applicable to Zoom Data Collection.
 
 ![](media/zoom_activate_app.png)
 
-## Configure the Splunk Remote Work Executive Dashboard
-* From the Splunk Search Head, go to the ***Remote Work Executive Dashboard*** App
+## Configure the Splunk Remote Work Insights - Executive Dashboard
+* From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
 
 ![](media/remote_work_icon.png)
 
@@ -291,13 +291,13 @@ This section is only applicable to Zoom Data Collection.
 ## Zoom Webhook Data Flow Diagram
 ![](media/zoom_workflow.png)
 
-# Remote Work Executive Dashboard
-## Remote Work Executive Home Dashboard
+# Remote Work Insights Executive Dashboard
+## Remote Work Insights Executive Home Dashboard
 ![](media/remoteWorkExecDashboard.png)
 
 **Dashboard Reference**: [rw_exec.xml](default/data/ui/views/rw_exec.xml)
 
-The first row of the Remote Work Executive Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
+The first row of the Remote Work Insights Executive Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
 
 The combination of VPN, authentication, and video conferencing services will provide insight into the following questions for a remote workforce:
 * Is our remote workforce connected?

@@ -1,5 +1,5 @@
 <form theme="dark" hideFilters="true" stylesheet="style.css">
-  <label>Remote Work Executive Dashboard</label>
+  <label>RWI - Executive Dashboard</label>
   <fieldset submitButton="false">
     <input type="time" token="time" searchWhenChanged="true">
       <label>Time</label>
@@ -37,7 +37,7 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">/app/remote_workforce/rw_vpn_gp_logins</link>
+          <link target="_blank">/app/rwi_executive_dashboard/rw_vpn_gp_logins</link>
         </drilldown>
       </single>
       <html>
@@ -72,7 +72,7 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">/app/remote_workforce/rw_vc_zoom_ops</link>
+          <link target="_blank">/app/rwi_executive_dashboard/rw_vc_zoom_ops</link>
         </drilldown>
       </single>
       <html>
@@ -113,7 +113,7 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">/app/remote_workforce/rw_auth_okta_app_activities</link>
+          <link target="_blank">/app/rwi_executive_dashboard/rw_auth_okta_app_activities</link>
         </drilldown>
       </single>
       <html>

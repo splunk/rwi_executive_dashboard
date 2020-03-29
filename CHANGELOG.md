@@ -1,6 +1,6 @@
 # Changelog
 
-* Project: Splunk Remote Work Executive Dashboard
+* Project: Remote Work Insights (RWI) - Executive Dashboard
 * Repository: https://github.com/splunk/remote_workforce
 * All notable changes to this project will be documented in this file.
 * The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `props.conf`: New search-time fields
-    - Okta [OktaIM2:log]: signature
-    - PAN [pan:system]: action, src
+    - Okta [`OktaIM2:log`]: signature
+    - PAN [`pan:system`]: action, src
 - `eventtypes.conf` 
 	- PAN: New eventtypes for Global Protect to Map to Network Sessions and Authentication Data Models
 
@@ -25,20 +25,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Splunk Remote Workforce Package
+- Splunk `Remote Work Insights (RWI) - Executive Dashboard` Package
 - Navigation Menu
 - Dashboards
-    - Remote Workforce Executive View
+    - RWI - Executive Dashboard
     - VPN Ops
     - Okta Application Activities
     - Authentication Ops
     - Zoom Ops
 - Lookup Table
-    - Zoom Meeting Type (ID): zoom_meeting_type.csv
+    - Zoom Meeting Type (ID): `zoom_meeting_type.csv`
 - Indexes macros
-    - VPN indexes: rw_vpn_indexes
-    - Authentication indexes: rw_auth_indexes
-    - Video Conferencing indexes: rw_vc_indexes
+    - VPN indexes: `rw_vpn_indexes`
+    - Authentication indexes: `rw_auth_indexes`
+    - Video Conferencing indexes: `rw_vc_indexes`
 - README.md
 - CHANGELOG.md
 - RUNBOOK.md
