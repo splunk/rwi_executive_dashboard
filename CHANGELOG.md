@@ -1,6 +1,6 @@
 # Changelog
 
-* Project: Remote Work Insights (RWI) - Executive Dashboard
+* Project: **Remote Work Insights - Executive Dashboard**
 * Repository: https://github.com/splunk/remote_workforce
 * All notable changes to this project will be documented in this file.
 * The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Moved VPN Ops Dashboard to Global Protect VPN Login Activities
 - VPN Ops Dashboard Updated to use CIM Network Sessions Data Model
 - Authentication Ops Dashboard to use CIM Authentication Data Model
-- New Project Name: Remote Work Executive Dashboard
+- New Project Name: `Remote Work Insights - Executive Dashboard`
 
 ## [1.0.0-alpha.1] - 2020-03-27
 
