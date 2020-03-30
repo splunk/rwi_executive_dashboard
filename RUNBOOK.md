@@ -1,4 +1,4 @@
-# Remote Work Insights (RWI) - Executive Dashboard: Runbook
+# Remote Work Insights - Executive Dashboard: Runbook
 
 ## Table of Contents
 
@@ -36,18 +36,18 @@ The purpose of the **Remote Work Insights - Executive Dashboard** is to provide 
 
 ![remote work app dashboard](media/remoteWorkExecDashboard.png)
 
-**Dashboard Reference**: [Remote Work Insights - Executive Dashboard (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
+**Dashboard Reference**: [RWI - Executive Dashboard (rw_exec.xml)](default/data/ui/views/rw_exec.xml)
 
 The first row provides real-time information on the number of workers connected via VPN, real-time number of active Zoom video conferencing meetings, and the top application accessed via Okta for the current day. The second row looks at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location.
 
-This document provides step by step instructions to install and configure your own *Remote Work Insights Executive Dashboard*. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
+This document provides step by step instructions to install and configure your own **Remote Work Insights - Executive Dashboard**. It will allow you to dynamically create dashboards similar to the image above for a specific set of service providers: Palo Alto Network’s GlobalProtect VPN information, Okta authentication services, and Zoom video conferencing services. The instructions begin by highlighting a visual depiction of the data sources by service, a checklist of necessary Splunk Add-ons (commonly known as TAs) that must be installed, a runbook to ensure the proper Splunk Add-ons are correctly in place and finally a summary of steps required to start sending Zoom data to Splunk. 
 
 ## Example of Remote Work Insights Data Collection
 
 ![data collection flow](media/data_collection_flow.png)
 
 # Checklist
-This section provides you the prerequisites to successfully install the *Remote Work Insights - Executive Dashboard*.
+This section provides you the prerequisites to successfully install the **Remote Work Insights - Executive Dashboard**.
 
 ## Splunk Applications
 Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
@@ -98,7 +98,7 @@ In this runbook, you need to complete the following items:
 
 ## Install Splunk Apps
 * Splunk Search Head
-  * Remote Work Executive Dashboard
+  * Remote Work Insights - Executive Dashboard
   * [Splunk Common Information Model (CIM) Add-on](https://splunkbase.splunk.com/app/1621/)
   * Palo Alto Networks
     * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
@@ -243,7 +243,7 @@ This section is only applicable to Zoom Data Collection.
 
 ![](media/zoom_activate_app.png)
 
-# Configure the Splunk Remote Work Insights - Executive Dashboard
+# Configure the **Remote Work Insights - Executive Dashboard**
 * From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
 
 ![](media/remote_work_icon.png)
@@ -291,13 +291,13 @@ This section is only applicable to Zoom Data Collection.
 ## Zoom Webhook Data Flow Diagram
 ![](media/zoom_workflow.png)
 
-# Remote Work Insights Executive Dashboard
+# Remote Work Insights - Executive Dashboard
 ## Remote Work Insights Executive Home Dashboard
 ![](media/remoteWorkExecDashboard.png)
 
 **Dashboard Reference**: [rw_exec.xml](default/data/ui/views/rw_exec.xml)
 
-The first row of the Remote Work Insights Executive Dashboard provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
+The first row of the **Remote Work Insights - Executive Dashboard** provides real-time information on the number of workers connected via VPN, real-time number of active Zoom meetings, and the top application accessed via Okta for the current day. The second row enables us to look at aggregate daily statistics over time for these same mission-critical indicators: number of VPN logins, number of Zoom meetings and average duration, and top 10 apps accessed via Okta. The bottom of the panel shows VPN connectivity counts by geographic location. Sudden drops during working hours may indicate connectivity issues.
 
 The combination of VPN, authentication, and video conferencing services will provide insight into the following questions for a remote workforce:
 * Is our remote workforce connected?
@@ -307,7 +307,7 @@ The combination of VPN, authentication, and video conferencing services will pro
 ## VPN Ops Dashboard
 ![](media/vpn_ops_dashboard.png)
 
-**Dashboard Reference**: [rw_vpn_gp_logins.xml](default/data/ui/views/rw_vpn_gp_logins.xml)
+**Dashboard Reference**: [rw_vpn_ops.xml](default/data/ui/views/rw_vpn_ops.xml)
 
 The top panel of the VPN Ops Dashboard shows successful and failed login attempts by location. The middle sequence of pie charts provides more specific information by country and city, as well as an overall indicator of successful and failed login attempts. The bottom row provides a time history of login attempts and insight into the number of unique users logging in to the network, and also a more granular view of users by regions.
 
