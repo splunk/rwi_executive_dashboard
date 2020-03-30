@@ -284,7 +284,7 @@
         <title>Login Details</title>
         <search base="bs1">
           <query>| fields _time user event_id failure_reason src_ip City Country
-| rename user as User, event_id as Status, failure_reason as "Failure Reason", src_ip as "Source IP"
+| rename user as User, event_id as Status, failure_reason as "Failure Reason", src_ip as "SourceIP"
 | sort - _time</query>
         </search>
         <option name="count">5</option>
@@ -294,7 +294,7 @@
         <option name="rowNumbers">true</option>
         <option name="wrap">true</option>
         <drilldown>
-          <link target="_blank">search?q=%60rw_vpn_indexes%60%20TERM($row.User$)%20user=$row.User$%20TERM($row.Source%20IP$)%20src_ip=$row.Source%20IP$&amp;earliest=$time.earliest$&amp;latest=$time.latest$</link>
+          <link target="_blank">search?q=%60rw_vpn_indexes%60%20TERM($row.User$)%20user=$row.User$%20TERM($row.SourceIP$)%20src_ip=$row.SourceIP$&amp;earliest=$time.earliest$&amp;latest=$time.latest$</link>
         </drilldown>
       </table>
     </panel>
