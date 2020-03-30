@@ -158,13 +158,16 @@ OR (TERM(geographicalContext) client.geographicalContext.city=* client.geographi
   <row>
     <panel>
       <table>
-        <title>Top Applications Accessed Via Okta Over Time</title>
+        <title>Top Applications Accessed Via Okta</title>
         <search base="bs1">
           <query>| stats dc(users) as "Unique Users" by app 
-| sort - "Unique Users" 
+| sort 10 - "Unique Users" 
 | rename app as "Application"</query>
         </search>
+        <option name="count">15</option>
         <option name="drilldown">cell</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
       </table>
     </panel>
   </row>
