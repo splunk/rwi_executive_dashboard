@@ -27,6 +27,7 @@
     * [Zoom References](#zoom-references)
 * [Appendix](#appendix)
     * [Zoom Webhook Data Flow Diagram](#zoom-webhook-data-flow-diagram)
+    * [Okta Data Flow Diagram](#okta-data-flow-diagram)
 * [Remote Work Insights - Executive Dashboard](#remote-work-insights---executive-dashboard)
     * [Remote Work Insights Executive Home Dashboard](#remote-work-insights-executive-home-dashboard)
     * [VPN Ops Dashboard](#vpn-ops-dashboard)
@@ -303,6 +304,9 @@ This section is only applicable to Zoom Data Collection.
 
 ## Zoom Webhook Data Flow Diagram
 ![](media/zoom_workflow.png)
+
+## Okta Data Flow Diagram
+![](media/okta_dataflow.png)
 
 # Remote Work Insights - Executive Dashboard
 ## Remote Work Insights Executive Home Dashboard
