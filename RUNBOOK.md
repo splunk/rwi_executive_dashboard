@@ -142,7 +142,9 @@ In this runbook, you need to complete the following items:
 * Enable Webhook event subscriptions
 * Activate Zoom App
 
-## Configure Remote Work Insights - Executive Dashboard
+# Configure Remote Work Insights - Executive Dashboard
+
+## Configure Indexes Macros
 * Configure the indexes macros to allow the Dashboards to work as per your environment.
 
 | Category | Macro | Definition |
@@ -150,6 +152,15 @@ In this runbook, you need to complete the following items:
 | Authentication | rw_auth_indexes | (index=okta) |
 | Video Conferencing | rw_vc_indexes | (index=zoom) |
 | VPN | rw_vpn_indexes | (index=pan) |
+
+## Configure the CIM Index Constraints
+* Follow this [CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints) documentation to update the Index Constraints for the `Authentication`, `Network Sessions` and `Network Traffic` data models.
+
+| Category | CIM Data Model | Indexes to add |
+| --- | --- | --- |
+| Authentication | Authentication | `okta`, `pan` |
+| VPN | Network Sessions | `pan` |
+| VPN | Network Traffic | `pan` |
 
 # Zoom Walkthrough
 
