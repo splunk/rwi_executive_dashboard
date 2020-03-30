@@ -14,11 +14,11 @@
     * [Configure Data Models](#configure-data-models)
     * [Configure Data Collections](#configure-data-collections)
     * [Create Zoom Webhook (Zoom only)](#create-zoom-webhook-zoom-only)
-    * [Configure RWI - Executive Dashboard](#configure-rwi-executive-dashboard)
+    * [Configure Remote Work Insights - Executive Dashboard](#configure-remote-work-insights---executive-dashboard)
 * [Zoom Walkthrough](#zoom-walkthrough)
     * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
-    * [Configure the Splunk Remote Work Insights Executive Dashboard](#configure-the-splunk-remote-work-insights-executive-dashboard)
+    * [Configure the Splunk Remote Work Insights Executive Dashboard](#configure-the-splunk-remote-work-insights---executive-dashboard)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
@@ -243,7 +243,7 @@ This section is only applicable to Zoom Data Collection.
 
 ![](media/zoom_activate_app.png)
 
-## Configure the Splunk Remote Work Insights - Executive Dashboard
+# Configure the Splunk Remote Work Insights - Executive Dashboard
 * From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
 
 ![](media/remote_work_icon.png)

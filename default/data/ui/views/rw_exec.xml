@@ -37,7 +37,7 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">/app/rwi_executive_dashboard/rw_vpn_gp_logins</link>
+          <link target="_blank">/app/rwi_executive_dashboard/rw_vpn_ops</link>
         </drilldown>
       </single>
       <html>
