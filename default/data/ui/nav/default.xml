@@ -1,0 +1,20 @@
+<nav search_view="search">
+  <view name="rw_intro" />
+  <view name="rw_exec" default="true" />
+  <collection label="VPN">
+    <view source="all" match="rw_vpn_" />
+  </collection>
+  <collection label="Authentication">
+    <view source="all" match="rw_auth_" />
+  </collection>
+  <collection label="Video Conference">
+    <view source="all" match="rw_vc_" />
+  </collection>
+  <collection label="Others">
+    <view name="search" />
+    <view name="datasets" />
+    <view name="reports" />
+    <view name="alerts" />
+    <view name="dashboards" />
+  </collection>
+</nav>

@@ -1,0 +1,144 @@
+<dashboard theme="dark" stylesheet="style.css">
+  <label>Authentication Ops</label>
+  <row>
+    <panel>
+      <single>
+        <title>Authentication Success Rate % (Last Hour)</title>
+        <search base="bs1">
+          <query>| where _time &gt;= relative_time(now(),"-24h")
+| fields _time "Success%"</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">100</option>
+        <option name="numberPrecision">0.00</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[10]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">0</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Last 24h Trending</option>
+        <option name="unit">%</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Number of Authentication Attempts  (Last Hour)</title>
+        <search base="bs1">
+          <query>| where _time &gt;= relative_time(now(),"-24h")
+| eval total = Success + Failure
+| fields _time total</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="height">100</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[10]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">0</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="underLabel">Last 24h Trending</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Authentication Success Rate Over Time</title>
+        <search id="bs1">
+          <query>| tstats prestats=t dc(Authentication.user) as count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.action IN("success","failure") by _time Authentication.action
+| timechart partial=f span=1h dc(Authentication.user) by Authentication.action
+| addtotals
+| eval "Success%" = round(success / Total * 100,2)
+| fields - Total
+| rename failure as "Failure", success as "Success"</query>
+          <earliest>-7d@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.maximumNumber">100</option>
+        <option name="charting.axisY2.minimumNumber">0</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.overlayFields">Success%</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.fieldColors">{"Success": 0x53a051, "Failure": 0xdc4e41}</option>
+        <option name="charting.legend.placement">top</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+      <html>
+        <b>Description:</b> This is to determine if the remote workforce is able to Authenticate to the IT applications. Any unusual behaviors on the Authentication Success rate may indicate signs of service degredation and this should be investigated.
+      </html>
+    </panel>
+    <panel>
+      <chart>
+        <title>Authentication Failure Reasons Over Time</title>
+        <search>
+          <query>| tstats prestats=t count from datamodel=Authentication where `rw_auth_indexes` nodename=Authentication.Failed_Authentication Authentication.action=failure by _time Authentication.signature
+| timechart span=1h count by Authentication.signature limit=0</query>
+          <earliest>-7d@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.drilldown">all</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+      <html>
+        <b>Description:</b> Is there anything abnormal on the Authentication Failure Reasons? Any new spikes for specific failures should be investigated.
+      </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Application Authentication Success Rate Below 100% for Today</title>
+        <search>
+          <query>| tstats prestats=t count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.app!=OktaIM2:log Authentication.action IN("success","failure") by Authentication.app Authentication.action
+| chart count by Authentication.app Authentication.action
+| addtotals
+| eval "Success%" = round(success / Total * 100,2)
+| fields - Total
+| rename failure as "Failure", success as "Success"
+| where 'Success%' &lt; 100
+| sort + "Success%"</query>
+          <earliest>@d</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">true</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="number" field="Success%">
+          <option name="unit">%</option>
+        </format>
+        <format type="color" field="Success%">
+          <colorPalette type="list">[#DC4E41,#F1813F,#F8BE34,#53A051,#53A051]</colorPalette>
+          <scale type="threshold">50,90,95,100</scale>
+        </format>
+      </table>
+      <html>
+        <b>Description:</b> Any low authentication success rate should be investigated and to determine if this is a single user issue or if there is a service degredation of a greater impact.
+      </html>
+    </panel>
+  </row>
+</dashboard>
