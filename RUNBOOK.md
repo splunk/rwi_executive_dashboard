@@ -18,7 +18,9 @@
 * [Zoom Walkthrough](#zoom-walkthrough)
     * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
-    * [Configure the Remote Work Insights - Executive Dashboard](#configure-the-remote-work-insights---executive-dashboard)
+* [Configure the Remote Work Insights - Executive Dashboard](#configure-the-remote-work-insights---executive-dashboard)
+    * [Configure Indexes Macros](#configure-indexes-macros)
+    * [Configure the CIM Index Constraints](#configure-the-cim-index-constraints)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
@@ -154,7 +156,7 @@ In this runbook, you need to complete the following items:
 | VPN | rw_vpn_indexes | (index=pan) |
 
 ## Configure the CIM Index Constraints
-* Follow this [CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints) documentation to update the Index Constraints for the `Authentication`, `Network Sessions` and `Network Traffic` data models.
+* Follow the [CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints) documentation to update the Index Constraints for the `Authentication`, `Network Sessions` and `Network Traffic` CIM data models.
 
 | Category | CIM Data Model | Indexes to add |
 | --- | --- | --- |
