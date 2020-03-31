@@ -208,54 +208,27 @@ This section is only applicable to Zoom Data Collection.
 ![](media/add_data_dialog_focus.png)
 
 ## Create Zoom Webhook Only App
+For this section, you may follow Zoom's documentation: [Create a Webhook-Only App](https://marketplace.zoom.us/docs/guides/getting-started/app-types/create-webhook-only-app)
 * Go to: [https://marketplace.zoom.us/](https://marketplace.zoom.us) and login
 * On the top right corner, click ***Develop > Build App***
-
-![](media/zoom_develop_buildapp.png)
-
 * ***Create*** a Webhook Only App
-
-![](media/zoom_webhook_only.png)
-
-* Fill the App Information and click Continue
+* **Fill** the App Information and click ***Continue***
   * App Name
   * Short Description
   * Company Name
   * Developer Name
   * Developer Email Address
-
-![](media/zoom_webhook_dialog.png) 
-
 * Enable ***Event Subscriptions***
-
-![](media/zoom_event_subscriptions.png)
-
 * Click on ***Add new event subscription*** button
-
-![](media/zoom_event_addnew.png)
-
-* Provide the following information
+* **Provide** the following information
   * Subscription Name (eg: Splunk)
   * Event notification endpoint URL (eg: https://example.com:4443)
-
-![](media/zoom_event_add_dialog.png)
-
 * Click on ***Add events*** button
-
-![](media/zoom_add_events_btn.png)
-
-* Subscribe to any Webhook Events you wish. For more details, please visit the [Zoom Webhook Reference page](https://marketplace.zoom.us/docs/api-reference/webhook-reference).
-
-![](media/zoom_event_types.png)
-
+* **Subscribe** to any Webhook Events you wish.
+  * For more details, please visit the [Zoom Webhook Reference page](https://marketplace.zoom.us/docs/api-reference/webhook-reference).
 * Click ***Save***
-
-![](media/zoom_save_events.png)
-
 * Click ***Continue***
-* Activate your newly created Webhook Only App
-
-![](media/zoom_activate_app.png)
+* ***Activate*** your newly created Webhook Only App
 
 # Configure the **Remote Work Insights - Executive Dashboard**
 * From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
