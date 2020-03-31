@@ -59,7 +59,7 @@
       <chart>
         <title>Authentication Success Rate Over Time</title>
         <search id="bs1">
-          <query>| tstats prestats=t dc(Authentication.user) as count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.action IN("success","failure") by _time Authentication.action
+          <query>| tstats prestats=t dc(Authentication.user) as count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.action IN ("success","failure") by _time Authentication.action
 | timechart partial=f span=1h dc(Authentication.user) by Authentication.action
 | addtotals
 | eval "Success%" = round(success / Total * 100,2)
@@ -108,7 +108,7 @@
       <table>
         <title>Application Authentication Success Rate Below 100% for Today</title>
         <search>
-          <query>| tstats prestats=t count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.app!=OktaIM2:log Authentication.action IN("success","failure") by Authentication.app Authentication.action
+          <query>| tstats prestats=t count from datamodel=Authentication.Authentication where `rw_auth_indexes` Authentication.app!=OktaIM2:log Authentication.action IN ("success","failure") by Authentication.app Authentication.action
 | chart count by Authentication.app Authentication.action
 | addtotals
 | eval "Success%" = round(success / Total * 100,2)
