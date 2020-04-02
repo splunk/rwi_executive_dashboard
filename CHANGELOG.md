@@ -5,6 +5,13 @@
 * The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2020-04-01
+
+### Changed
+- v1.0.1 Bugfix
+- Zoom Active Meetings SPL updated
+- Zoom SPL references to `source=` updated to `event=`
+
 ## [1.0.0] - 2020-03-31
 - v1.0.0 Release
 
