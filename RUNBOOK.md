@@ -170,12 +170,7 @@ In this runbook, you need to complete the following items:
 ## Configure Splunk JWT Webhook Modular Input Add-on
 This section is only applicable to Zoom Data Collection.
 
-* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator to whitelist the following network subnets. For more details, please visit the [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) documentation and feel free to contact Zoom support directly for additional assistance.
-    * `18.205.93.128/25`
-    * `52.202.62.192/26`
-    * `3.80.20.128/25`
-    * `3.208.72.0/25`
-    * `3.211.241.0/25`
+* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator and Zoom Support to whitelist the related Zoom network CIDR blocks. For more details, please visit the [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) documentation and feel free to contact Zoom support directly for additional assistance.
 * Install [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook) on a Splunk Heavy Forwarder (Single Instance Deployments can use the same instance)
 * From the Splunk Web Interface, go to **Settings > Data Inputs**
 ![](media/data_input.png)
