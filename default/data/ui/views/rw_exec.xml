@@ -48,7 +48,7 @@
       <single>
         <title>Active Zoom Meetings</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype="zoom:webhook" TERM(meeting.started) OR TERM(meeting.ended) event="meeting.started" OR event="webinar.started" OR event="meeting.ended" OR event="webinar.ended" 
+          <query>`rw_vc_indexes` sourcetype="zoom:webhook" event="meeting.started" OR event="webinar.started" OR event="meeting.ended" OR event="webinar.ended" 
 | stats latest(event) AS event latest(_time) AS _time BY payload.object.uuid 
 | where event="meeting.started" OR event="webinar.started"
 | timechart span=1h dc(payload.object.uuid) as active_meeting</query>
