@@ -1,0 +1,198 @@
+<form theme="dark">
+  <label>Zoom Security</label>
+  <fieldset submitButton="true">
+    <input type="time" token="s_time" searchWhenChanged="true">
+      <label>Time</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Zoom Versions Older than 4.6 - Windows</title>
+      <chart>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="user.signed_in" "payload.object.client_type"=win payload.object.version&lt;4.6  | stats count by payload.object.version | sort - count</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Zoom Versions Older than 4.6 - OS X</title>
+      <chart>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="user.signed_in" payload.object.client_type=mac payload.object.version&lt;4.6 | stats count by payload.object.version | sort - count</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.04</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>New Zoom Accounts Created</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="user.created" | table _time payload.object.email</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Users No Longer Requiring Passwords Before Joining via PSTN</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook"  event="user.settings_updated" payload.object.settings.schedule_meeting.pstn_password_protected=false payload.old_object.settings.schedule_meeting.pstn_password_protected=true | rename payload.operator AS user | table _time user</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Users No Longer Requiring Passwords Before PMI Meetings</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook"  event="user.settings_updated" payload.object.settings.schedule_meeting.require_password_for_pmi_meetings=none payload.old_object.settings.schedule_meeting.require_password_for_pmi_meetings!=none 
+| rename payload.operator AS user 
+| rename payload.old_object.settings.schedule_meeting.require_password_for_pmi_meetings AS "old value"
+| table _time user "old value"</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Users No Longer Requiring Passwords Before Scheduling Meetings</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook"  event="user.settings_updated" password  "payload.object.settings.schedule_meeting.require_password_for_scheduling_new_meetings"=false | rename payload.operator AS user | table _time user</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">5</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Created Meetings That Are Set To Exceed 8 Hours</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="meeting.created" payload.object.duration&gt;480 | rename payload.object.duration AS meet_len | eval meet_sec= meet_len * 60 | eval length=tostring(meet_sec,"duration") | table _time payload.object.topic payload.operator length</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Recently Changed User PMI</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="user.updated" payload.object.pmi=* | table _time payload.operator payload.old_object.pmi payload.object.pmi</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Participant Duration above the 95th Percentile</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="meeting.participant_left" payload.object.duration&gt;0 | eventstats perc95(payload.object.duration) as perc95 | eval perc95=round(perc95,0) | rename payload.object.duration as duration | table payload.object.topic payload.object.participant.user_name duration perc95 | where duration&gt;perc95 | sort - duration</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Meeting Duration above the 95th Percentile</title>
+      <table>
+        <search>
+          <query>(index=zoom) sourcetype="zoom:webhook" event="meeting.ended" payload.object.duration&gt;0 | eventstats perc95(payload.object.duration) as perc95 | eval perc95=round(perc95,0) | rename payload.object.duration as duration | table _time payload.object.topic payload.object.host_id duration perc95 | where duration&gt;perc95 | sort - duration</query>
+          <earliest>$s_time.earliest$</earliest>
+          <latest>$s_time.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</form>
