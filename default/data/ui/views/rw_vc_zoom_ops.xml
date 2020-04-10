@@ -1,16 +1,18 @@
 <dashboard theme="dark" stylesheet="style.css">
   <label>Zoom Ops</label>
   <search id="zoom_stats">
-    <query>`rw_vc_indexes` sourcetype="zoom:webhook" event="meeting.started" OR event="webinar.started" OR event="meeting.ended" OR event="webinar.ended"
-| eval x_{event}_time = _time 
-| stats values(x_meeting.*) as * by payload.object.uuid payload.object.duration 
-| rename payload.object.duration as scheduled_duration 
-| eval isActive = if(isnull(ended_time),1,0) 
-| where isActive=0 
-| eval actual_duration=ended_time - started_time, actual_duration=actual_duration/60 
-| stats median(actual_duration) as med_duration, max(actual_duration) as max_duration, min(actual_duration) as min_duration</query>
-    <earliest>-1h@h</earliest>
-    <latest>@h</latest>
+    <query>
+<![CDATA[
+`rw_vc_indexes` sourcetype="zoom:webhook" event="meeting.ended" OR event="meeting.started" OR event="webinar.ended" OR event="webinar.started"
+| rex field="payload.object.start_time" mode=sed "s/Z/+0000/g"
+| rex field="payload.object.end_time" mode=sed "s/Z/+0000/g"
+| eval endtime = coalesce(strptime('payload.object.end_time',"%FT%T%z"),now()), starttime = strptime('payload.object.start_time',"%FT%T%z"), duration = (endtime - starttime)/60
+| eval duration = if(duration<0,0,duration)
+| stats median(duration) as med_duration min(duration) as min_duration max(duration) as max_duration
+]]>
+    </query>
+    <earliest>-60m</earliest>
+    <latest>@m</latest>
   </search>
   <row>
     <panel>
@@ -22,7 +24,7 @@
 | where event="meeting.started" OR event="webinar.started"
 | timechart span=1h dc(payload.object.uuid) as active_meeting</query>
           <earliest>-60m</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="drilldown">none</option>
@@ -37,11 +39,18 @@
       <single>
         <title>Active Meeting Participants</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype=zoom:webhook event=meeting.participant_joined 
-| eval unique_user = md5('payload.object.uuid'.'payload.object.participant.id')
+          <query>`rw_vc_indexes` sourcetype=zoom:webhook event=meeting.participant_joined OR event="webinar.participant_joined"
+    [ search `rw_vc_indexes` sourcetype="zoom:webhook" event="meeting.ended" OR event="webinar.ended"
+    | eval host_id = "\"".'payload.object.host_id'."\"" 
+    | stats values(host_id) as host_id 
+    | nomv host_id 
+    | rex field="host_id" mode=sed "s/ /,/g" 
+    | eval search = "NOT \"payload.object.host_id\" IN (".host_id.")" 
+    | return $search] 
+| eval unique_user = md5('payload.object.uuid'.'payload.object.participant.id'.'payload.object.participant.user_id')
 | stats dc(unique_user) as count</query>
           <earliest>-60m</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">value</option>
@@ -152,7 +161,7 @@
 | eval endtime = strptime('payload.object.end_time',"%FT%TZ"), starttime = strptime('payload.object.start_time',"%FT%TZ"), duration = round((endtime - starttime)/60,2)
 | timechart span=1h dc(payload.object.uuid) as "Unique Meetings" avg(duration) as "Average Duration (min)"</query>
           <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
         </search>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisY2.enabled">1</option>
@@ -177,7 +186,7 @@
 | eval total = overTime + onTime, "onTime%" = round(onTime / total * 100,2)
 | fields - total</query>
           <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
         </search>
         <option name="charting.axisTitleX.visibility">collapsed</option>
         <option name="charting.axisTitleY.text">Number of Meetings</option>
@@ -206,7 +215,7 @@
 | lookup zoom_meeting_type.csv payload.object.type as payload.object.type OUTPUT meeting_type 
 | stats sum(active_meeting) as count by meeting_type</query>
           <earliest>-60m</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -250,7 +259,7 @@
           <query>`rw_vc_indexes` sourcetype="zoom:webhook" 
 | stats count by payload.object.client_type</query>
           <earliest>-7d@h</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -296,11 +305,12 @@
         <search>
           <query>`rw_vc_indexes` sourcetype="zoom:webhook" event=meeting.participant_joined 
 | bin span=1h _time 
-| stats dc(payload.object.participant.id) as participant_count by payload.object.uuid _time
+| eval unique_user = md5('payload.object.uuid'.'payload.object.participant.id'.'payload.object.participant.user_id')
+| stats dc(unique_user) as participant_count by payload.object.uuid _time
 | bin participant_count span=log2
 | chart limit=0 count by _time participant_count</query>
           <earliest>-7d@h</earliest>
-          <latest>now</latest>
+          <latest>@m</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>

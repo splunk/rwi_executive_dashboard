@@ -16,6 +16,12 @@ export = system
 export = system
 
 
+### TAGS
+
+[tags]
+export = system
+
+
 ### TRANSFORMS
 
 [transforms]
