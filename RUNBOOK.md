@@ -16,14 +16,14 @@
     * [Create Zoom Webhook (Zoom only)](#create-zoom-webhook-zoom-only)
     * [Configure Remote Work Insights - Executive Dashboard](#configure-remote-work-insights---executive-dashboard)
 * [Zoom Walkthrough](#zoom-walkthrough)
-    * [Configure Splunk JWT Webhook Modular Input Add-on](#configure-splunk-jwt-webhook-modular-input-add-on)
+    * [Configure Splunk Connect for Zoom](#configure-splunk-connect-for-zoom)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
 * [Configure the Remote Work Insights - Executive Dashboard](#configure-the-remote-work-insights---executive-dashboard)
     * [Configure Indexes Macros](#configure-indexes-macros)
     * [Configure the CIM Index Constraints](#configure-the-cim-index-constraints)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
-    * [Splunk JWT Webhook Add-on Support](#splunk-jwt-webhook-add-on-support)
+    * [Splunk Connect for Zoom](#splunk-connect-for-zoom)
     * [Zoom References](#zoom-references)
 * [Appendix](#appendix)
     * [Zoom Webhook Data Flow Diagram](#zoom-webhook-data-flow-diagram)
@@ -63,7 +63,7 @@ Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and
 * Okta 
   * [Okta Identity Cloud Add-on for Splunk](https://splunkbase.splunk.com/app/3682/)
 * Zoom
-  * [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook)
+  * [Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961)
 
 ## Splunk Infrastructure
 * Standalone Splunk Instance
@@ -88,7 +88,7 @@ Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and
 ## Permissions Requirements
 * Splunk Environment
   * Splunk admin account with ability to install/configure apps and create indexes
-  * Splunk CLI (Command Line) access (only required for the JWT Modular Input Add-on)
+  * Splunk CLI (Command Line) access (only required for the Splunk Connect for Zoom)
   * HTTP Event Collector (HEC) Token used by Splunk Connect for Syslog
 * Zoom Environment
   * Zoom administrator or developer account
@@ -112,7 +112,7 @@ In this runbook, you need to complete the following items:
   * Okta
     * [Okta Identity Cloud Add-on for Splunk](https://splunkbase.splunk.com/app/3682/)
   * Zoom
-    * [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook)
+    * [Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961)
 * Syslog
     * [Splunk Connect for Syslog](https://splunkbase.splunk.com/app/4740)
 
@@ -137,8 +137,7 @@ In this runbook, you need to complete the following items:
 * Okta
   * Configure Okta Identity Cloud Add-on for Splunk and collecting Okta events
 * Zoom
-  * Configure Splunk JWT Webhook Modular Input Add-on to receive Zoom Webhook events 
-    * Step by step instructions included in this section: [Configure Splunk JWT Webhook Modular Input Add-On](#Configure-Splunk-JWT-Webhook-Modular-Input-Add-On)
+  * Configure the [Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961) to accept incoming webhooks from Zoom
 
 ## Create Zoom Webhook (Zoom only)
 * Create Zoom Webhook Only App
@@ -167,40 +166,11 @@ In this runbook, you need to complete the following items:
 
 # Zoom Walkthrough
 
-## Configure Splunk JWT Webhook Modular Input Add-on
+## Configure Splunk Connect for Zoom
 This section is only applicable to Zoom Data Collection.
 
-* Ensure your environment allows incoming traffic from the Zoom Webhook Event Services. Work with your Network Administrator and Zoom Support to whitelist the related Zoom network CIDR blocks. For more details, please visit the [Network Firewall or Proxy Server Settings for Zoom](https://support.zoom.us/hc/en-us/articles/201362683-Network-Firewall-or-Proxy-Server-Settings-for-Zoom) documentation and feel free to contact Zoom support directly for additional assistance.
-* Install [Splunk JWT Webhook Modular Input Add-on](https://github.com/splunk/jwt_webhook) on a Splunk Heavy Forwarder (Single Instance Deployments can use the same instance)
-* From the Splunk Web Interface, go to **Settings > Data Inputs**
-![](media/data_input.png)
-* Click **Add New** for the **JWT Webhook** input
-![](media/jwt_webhook.png)
-* Fill the parameters as per the table below or you may enter specific value as per your environment. 
-**Note:**
-* The JWT Webhook Add-On uses the default Splunk Web self-signed certificate and private key as described here: [About securing Splunk Enterprise with SSL](https://docs.splunk.com/Documentation/Splunk/latest/Security/AboutsecuringyourSplunkconfigurationwithSSL). For security reasons and best practices, it is recommended to use a Trusted CA Signed SSL Certificates. You may follow this documentation to assist you with generating the needed certificates for your trusted CA: [How to get certificates signed by a third-party](https://docs.splunk.com/Documentation/Splunk/latest/Security/Howtogetthird-partycertificates). 
-* For the purpose of this document, we will use the default certificates that were shipped with Splunk to help you understand the setup process. The default certificates are located here
-  * `$SPLUNK_HOME/etc/auth/splunkweb/cert.pem`
-  * `$SPLUNK_HOME/etc/auth/splunkweb/privkey.pem`
-* If you wish to use your own SSL certificates, we recommend storing your certificate and private key in the following directory: `$SPLUNK_HOME/etc/auth/<your_folder>`
-
-| Parameter | Value |
-| --- | --- |
-| Name | Zoom |
-| Secret | Leave Empty |
-| Port| 4443 |
-| Path | Leave Empty |
-| SSL Certificate File | etc/auth/splunkweb/cert.pem |
-| SSL Certificate Key File | etc/auth/splunkweb/privkey.pem |
-| Password | Leave Empty |
-| Set sourcetype | Manual |
-| Sourcetype | zoom:webhook |
-| Host | Leave as is |
-| Index | zoom |
-
-![](media/add_data_dialog.png)
-* Click the ***Next*** button and this should complete the Input setup.
-![](media/add_data_dialog_focus.png)
+* Use the [Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961) to accept incoming webhooks from Zoom
+* Please visit the: [Splunk Connect for Zoom user documentation](https://docs.splunk.com/Documentation/ZoomConnect) to assist you with the installation and configuration.
 
 ## Create Zoom Webhook Only App
 For this section, you may follow Zoom's documentation: [Create a Webhook-Only App](https://marketplace.zoom.us/docs/guides/getting-started/app-types/create-webhook-only-app)
@@ -257,8 +227,9 @@ For this section, you may follow Zoom's documentation: [Create a Webhook-Only Ap
 * [Splunk CIM Manual](https://docs.splunk.com/Documentation/CIM/Latest/User/Overview)
 * [Splunk CIM Index Constraints](https://docs.splunk.com/Documentation/CIM/latest/User/Setup#Set_index_constraints)
 
-## Splunk JWT Webhook Add-on Support
-* [https://github.com/splunk/jwt_webhook/issues](https://github.com/splunk/jwt_webhook/issues)
+## Splunk Connect for Zoom
+* [Splunkbase: Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961)
+* [Splunk Connect for Zoom user documentation](https://docs.splunk.com/Documentation/ZoomConnect)
 
 ## Zoom References
 * [Zoom Create a Webhook-only App](https://marketplace.zoom.us/docs/guides/getting-started/app-types/create-webhook-only-app)
