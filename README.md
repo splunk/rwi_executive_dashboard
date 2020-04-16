@@ -1,6 +1,10 @@
 # Remote Work Insights - Executive Dashboard
 [![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 
+## Splunkbase Official Version
+
+[https://splunkbase.splunk.com/app/4952](https://splunkbase.splunk.com/app/4952)
+
 ## Introduction
 The purpose of the **Remote Work Insights - Executive Dashboard** is to provide the ability to aggregate information across VPN, authentication, and video conferencing services to provide insights into the connectivity, productivity, and engagement across a remote workforce. An example dashboard that synthesizes information across these services is illustrated below:
 
