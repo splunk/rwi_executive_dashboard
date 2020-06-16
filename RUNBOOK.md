@@ -4,6 +4,9 @@
 
 * [Introduction](#introduction)
     * [Example of Remote Work Insights Data Collection](#example-of-remote-work-insights-data-collection)
+* [Upgrade RWI - Executive Dashboard from v1.0.x to v.1.1.x](#upgrade-rwi---executive-dashboard-from-v10x-to-v11x)
+    * [Important Note](#important-note)
+    * [Navigation Menu](#navigation-menu)
 * [Checklist](#checklist)
     * [Splunk Applications](#splunk-applications)
     * [Splunk Infrastructure](#splunk-infrastructure)
@@ -19,8 +22,8 @@
     * [Configure Splunk Connect for Zoom](#configure-splunk-connect-for-zoom)
     * [Create Zoom Webhook Only App](#create-zoom-webhook-only-app)
 * [Configure the Remote Work Insights - Executive Dashboard](#configure-the-remote-work-insights---executive-dashboard)
-    * [Configure Indexes Macros](#configure-indexes-macros)
-    * [Configure the CIM Index Constraints](#configure-the-cim-index-constraints)
+    * [Version 1.0.x](#version-10x)
+    * [Version 1.1.x](#version-11x)
 * [Additional Resources](#additional-resources)
     * [Splunk Docs](#splunk-docs)
     * [Splunk Connect for Zoom](#splunk-connect-for-zoom)
@@ -49,6 +52,35 @@ This document provides step by step instructions to install and configure your o
 
 ![data collection flow](media/data_collection_flow.png)
 
+# Upgrade RWI - Executive Dashboard from v1.0.x to v.1.1.x
+1. Backup any custom dashboards or reports that were created while on v1.0.x
+2. Backup the navigation bar (default.xml), only if you have modified the application menu bar
+3. Download and install the latest version of the [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/apps/id/Splunk_SA_rwi-executive-dashboard) from Splunkbase
+    * *Installing on Splunk Cloud*: Installing on Splunk Cloud through Self-Service Apps Install requires Splunk Cloud version 7.1.x or later.
+    * To install on *Splunk Cloud version 7.0.x or earlier*, submit a case to Splunk Support. See Contact Splunk Support for contact information and how to submit a case.
+4. Download and install the latest version of the [RWI - Executive Dashboard](https://splunkbase.splunk.com/app/4952)
+    * *Installing on Splunk Cloud*: Installing on Splunk Cloud through Self-Service Apps Install requires Splunk Cloud version 7.1.x or later.
+    * To install on *Splunk Cloud version 7.0.x or earlier*, submit a case to Splunk Support. See Contact Splunk Support for contact information and how to submit a case.
+5. Restart the *Splunk Search Head* or Initiate a *Search Head Cluster* Rolling Restart
+6. Access the RWI - Executive Dashboard app v1.1.x+ for the first time using a Splunk Admin account and proceed with the Guided Setup
+    * App Prerequisites check
+    * Indexes macros configuration
+    * Data collections check
+    * Features/Navigation bar configuration
+7. Restore any custom dashboards or reports from Step 1
+8. ** **See [Important Note](#important-note) Before Proceeding** **
+9. Merge any custom navigation menu from Step 2 with the default navigation bar. 
+
+## Important Note
+
+### New App Prequisites for 1.1.x+
+- [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/app/5063)
+- This Splunk Add-on provides support functions to the RWI - Executive Dashboard v1.1 and above as to the Video Conferencing data model, field search-time extractions for the views, reports provided in the main App.
+
+### Navigation Menu
+- If you have modified the Navigation Bar, you may still use the **Guided Setup**. Though, the menu ordering of the navigation bar may changes.
+- If you are upgrading from v1.0.x to v1.1.x, you may access the Guided Setup using this link: `http(s)://<your_splunk_hostname>:<port>/en-US/app/rwi_executive_dashboard/guided_setup`
+
 # Checklist
 This section provides you the prerequisites to successfully install the **Remote Work Insights - Executive Dashboard**.
 
@@ -56,6 +88,7 @@ This section provides you the prerequisites to successfully install the **Remote
 Download the following apps from [Splunkbase](https://splunkbase.splunk.com) and deploy them according to your Splunk Environment. For more information on how to deploy Splunk apps and addons refer to the [App Deployment Overview](https://docs.splunk.com/Documentation/Splunk/latest/Admin/Deployappsandadd-ons).
 
 * Splunk
+  * [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/app/5063)
   * [Splunk Common Information Model (CIM) Add-on](https://splunkbase.splunk.com/app/1621/)
 * Palo Alto Networks 
   * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
@@ -102,6 +135,7 @@ In this runbook, you need to complete the following items:
 ## Install Splunk Apps
 * Splunk Search Head
   * Remote Work Insights - Executive Dashboard
+  * [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/app/5063)
   * [Splunk Common Information Model (CIM) Add-on](https://splunkbase.splunk.com/app/1621/)
   * Palo Alto Networks
     * [Palo Alto Networks Add-on for Splunk](https://splunkbase.splunk.com/app/2757/)
@@ -196,6 +230,7 @@ For this section, you may follow Zoom's documentation: [Create a Webhook-Only Ap
 * ***Activate*** your newly created Webhook Only App
 
 # Configure the **Remote Work Insights - Executive Dashboard**
+## Version 1.0.x
 * From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
 
 ![](media/remote_work_icon.png)
@@ -213,6 +248,12 @@ For this section, you may follow Zoom's documentation: [Create a Webhook-Only Ap
 | VPN | rw_vpn_indexes | (index=pan) |
 
 ![](media/search_macros.png)
+
+## Version 1.1.x+
+* From the Splunk Search Head, go to the ***RWI - Executive Dashboard*** App
+* You should be prompted with the Guided Setup if running version 1.1.x+ for the first time
+* The wizard will assist you with the app prerequisites, index macros configuration, incoming data check and navigation bar setup
+* The Indexes Macros were moved to the [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/apps/id/Splunk_SA_rwi-executive-dashboard). You may still configure the Indexes Macros outside of the *Guided Setup* as in the previous section for [Version 1.0.x](#version-10x)
 
 # Additional Resources
 

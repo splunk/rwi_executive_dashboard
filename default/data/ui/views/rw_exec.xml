@@ -12,7 +12,7 @@
   <row>
     <panel>
       <single>
-        <title>Active VPN Sessions</title>
+        <title>Number of VPN Sessions</title>
         <search>
           <query>| tstats dc(All_Sessions.user) from datamodel=Network_Sessions where `rw_vpn_indexes` nodename=All_Sessions.VPN</query>
           <earliest>-1h</earliest>
@@ -41,19 +41,18 @@
         </drilldown>
       </single>
       <html>
-        <b>Description:</b> Current number of connected workers.
+        <b>Description:</b> Number of VPN sessions seen within the last hour.
       </html>
     </panel>
     <panel>
       <single>
-        <title>Active Zoom Meetings</title>
+        <title>Number of Video Conferencing Meetings</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype="zoom:webhook" event="meeting.started" OR event="webinar.started" OR event="meeting.ended" OR event="webinar.ended" 
-| stats latest(event) AS event latest(_time) AS _time BY payload.object.uuid 
-| where event="meeting.started" OR event="webinar.started"
-| timechart span=1h dc(payload.object.uuid) as active_meeting</query>
-          <earliest>-1h@h</earliest>
-          <latest>@h</latest>
+          <query>| tstats min(_time) as _time from datamodel=Video_Conferencing where `rw_vc_indexes` (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by Video_Conferencing.meeting_uuid 
+| rename Video_Conferencing.* as *
+| stats dc(meeting_uuid) as meetings</query>
+          <earliest>-1h</earliest>
+          <latest>now</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">trend</option>
@@ -74,12 +73,12 @@
         <option name="useColors">0</option>
         <option name="useThousandSeparators">1</option>
         <drilldown>
-          <link target="_blank">/app/rwi_executive_dashboard/rw_vc_zoom_ops</link>
+          <link target="_blank">/app/rwi_executive_dashboard/rw_vc_ops</link>
         </drilldown>
       </single>
       <html>
         <b>Description:</b>
-        Current number of Zoom meetings.
+         Number of meetings seen within the last hour.
       </html>
     </panel>
     <panel>
@@ -183,11 +182,11 @@
     </panel>
     <panel>
       <chart>
-        <title>Number of Zoom Meetings</title>
+        <title>Number of Video Conferencing Meetings</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype="zoom:webhook" TERM(meeting.started) OR TERM(meeting.ended) event="meeting.started" OR event="meeting.ended"
-| eval endtime = strptime('payload.object.end_time',"%FT%TZ"), starttime = strptime('payload.object.start_time',"%FT%TZ"), duration = round((endtime - starttime)/60,2)
-| timechart span=1d dc(payload.object.uuid) as "Number of Meetings" avg(duration) as "Average Meeting Duration (min)"</query>
+          <query>| tstats max(Video_Conferencing.duration) as duration from datamodel=Video_Conferencing where `rw_vc_indexes` (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by _time nodename Video_Conferencing.meeting_uuid span=1d
+| timechart span=1d dc(Video_Conferencing.meeting_uuid) as "Number of Meetings" avg(eval(if(like(nodename,"%Ended"),duration/60,null()))) as "Average Meeting Duration (min)"
+| eval "Average Meeting Duration (min)" = round('Average Meeting Duration (min)',2)</query>
           <earliest>$time.earliest$</earliest>
           <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -217,6 +216,7 @@
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
         <option name="charting.drilldown">none</option>
+        <option name="charting.fieldColors">{"Number of Meetings": 0x0e71eb, "Average Meeting Duration (min)": 0xa7cfff}</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -227,11 +227,10 @@
         <option name="trellis.enabled">0</option>
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
-        <option name="charting.fieldColors">{"Number of Meetings": 0x0e71eb, "Average Meeting Duration (min)": 0xa7cfff}</option>
       </chart>
       <html>
         <b>Description:</b>
-        Number of Zoom Meetings created over time on a daily basis.
+        Number of Meetings created over time on a daily basis.
       </html>
     </panel>
     <panel>
@@ -293,8 +292,8 @@
 | iplocation Authentication.src 
 | where len(Country)&gt;0 AND len(City)&gt;0
 | geostats count by Authentication.action</query>
-          <earliest>-1h</earliest>
-          <latest>@h</latest>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="drilldown">none</option>

@@ -1,11 +1,11 @@
 <form theme="dark" stylesheet="style.css" hideFilters="true">
-  <label>Zoom Ops</label>
-  <search id="zoom_stats">
+  <label>Microsoft Teams Ops</label>
+  <search id="meeting_duration">
     <query>
-<![CDATA[
-| tstats max(Video_Conferencing.duration) as duration from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook nodename=Video_Conferencing.Meeting.Meeting_Ended OR nodename=Video_Conferencing.Webinar.Webinar_Ended Video_Conferencing.duration=* by _time Video_Conferencing.meeting_uuid
-| stats median(eval(duration/60)) as med_duration min(eval(duration/60)) as min_duration max(eval(duration/60)) as max_duration
-]]>
+      <![CDATA[
+| tstats max(Video_Conferencing.duration) as duration from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype="m365:teams:callRecord" Video_Conferencing.vendor_product="Microsoft Teams" nodename=Video_Conferencing.Meeting.Meeting_Ended OR nodename=Video_Conferencing.Webinar.Webinar_Ended Video_Conferencing.duration=* by _time Video_Conferencing.meeting_uuid
+| stats median(eval(duration/60)) as MedianDuration min(eval(duration/60)) as MinDuration max(eval(duration/60)) as MaxDuration dc(Video_Conferencing.meeting_uuid) as "UniqueMeetings"
+      ]]>
     </query>
     <earliest>$time_tok.earliest$</earliest>
     <latest>$time_tok.latest$</latest>
@@ -22,53 +22,16 @@
   <row>
     <panel>
       <single>
-        <title>Active Meetings</title>
-        <search>
-          <query>| tstats max(_time) as _time latest(Video_Conferencing.action) as action from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by Video_Conferencing.meeting_uuid 
-| where action="started" AND _time &gt; relative_time(now(),"-1h")
-| rename Video_Conferencing.* as *
-| stats dc(meeting_uuid) as active_meeting</query>
-          <earliest>-24h</earliest>
-          <latest>now</latest>
-          <sampleRatio>1</sampleRatio>
-        </search>
-        <option name="drilldown">none</option>
-        <option name="height">95</option>
-        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
-        <option name="refresh.display">progressbar</option>
-        <option name="showSparkline">0</option>
-        <option name="showTrendIndicator">0</option>
-      </single>
-    </panel>
-    <panel>
-      <single>
-        <title>Active Meeting Participants</title>
-        <search>
-          <query>| tstats max(_time) as _time latest(Video_Conferencing.action) as action from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook nodename=Video_Conferencing.Meeting.Meeting_Participant 
-    [| tstats max(_time) as _time latest(Video_Conferencing.action) as action from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by Video_Conferencing.meeting_uuid 
-    | where action="started" AND _time &gt; relative_time(now(),"-1h") 
-    | rename Video_Conferencing.* as * 
-    | eval meeting_uuid = "\"".meeting_uuid."\"" 
-    | stats values(meeting_uuid) as meeting_uuid 
-    | nomv meeting_uuid 
-    | rex field="meeting_uuid" mode=sed "s/ /,/g" 
-    | eval search = "\"Video_Conferencing.meeting_uuid\" IN (".meeting_uuid.")" 
-    | return $search]
-    by Video_Conferencing.meeting_uuid Video_Conferencing.Meeting.Meeting_Participant.participant_id
-| rename Video_Conferencing.* as *, Meeting.Meeting_Participant.* as * 
-| where action="joined"
-| stats dc(participant_id) as count</query>
-          <earliest>-24h</earliest>
-          <latest>now</latest>
-          <sampleRatio>1</sampleRatio>
+        <title>Unique Meetings</title>
+        <search base="meeting_duration">
+          <query>| fields UniqueMeetings</query>
         </search>
         <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
+        <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="height">95</option>
         <option name="numberPrecision">0</option>
-        <option name="rangeColors">["0x53a051", "0x0877a6", "0xf8be34", "0xf1813f", "0xdc4e41"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="rangeValues">[0,40,100,200]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">1</option>
         <option name="showTrendIndicator">1</option>
@@ -84,17 +47,44 @@
     </panel>
     <panel>
       <single>
-        <title>Longest Meeting</title>
-        <search base="zoom_stats">
-          <query>| fields max_duration</query>
+        <title>Unique Participants</title>
+        <search>
+          <query>| tstats dc(Video_Conferencing.Meeting.Meeting_Participant.participant_id) as participants from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype="m365:teams:callRecord" nodename=Video_Conferencing.Meeting.Meeting_Participant</query>
+          <earliest>$time_tok.earliest$</earliest>
+          <latest>$time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
         </search>
         <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
+        <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="height">95</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="rangeValues">[0,40,100,200]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Median Meeting</title>
+        <search base="meeting_duration">
+          <query>| fields MedianDuration</query>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">block</option>
+        <option name="drilldown">none</option>
         <option name="numberPrecision">0.00</option>
         <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="rangeValues">[20,100,300,400]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">1</option>
         <option name="showTrendIndicator">1</option>
@@ -111,17 +101,16 @@
     </panel>
     <panel>
       <single>
-        <title>Median Meeting</title>
-        <search base="zoom_stats">
-          <query>| fields med_duration</query>
+        <title>Longest Meeting</title>
+        <search base="meeting_duration">
+          <query>| fields "MaxDuration"</query>
         </search>
         <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
+        <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="height">95</option>
         <option name="numberPrecision">0.00</option>
         <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="rangeValues">[20,100,300,400]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">1</option>
         <option name="showTrendIndicator">1</option>
@@ -139,16 +128,15 @@
     <panel>
       <single>
         <title>Shortest Meeting</title>
-        <search base="zoom_stats">
-          <query>| fields min_duration</query>
+        <search base="meeting_duration">
+          <query>| fields MinDuration</query>
         </search>
         <option name="colorBy">value</option>
-        <option name="colorMode">none</option>
+        <option name="colorMode">block</option>
         <option name="drilldown">none</option>
-        <option name="height">95</option>
         <option name="numberPrecision">0.00</option>
         <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
-        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="rangeValues">[20,100,300,400]</option>
         <option name="refresh.display">progressbar</option>
         <option name="showSparkline">1</option>
         <option name="showTrendIndicator">1</option>
@@ -167,65 +155,44 @@
   <row>
     <panel>
       <chart>
-        <title>Meeting Count by Duration</title>
+        <title>Participant User Agent - Header</title>
         <search>
-          <query>| tstats max(Video_Conferencing.duration) as duration from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by _time nodename Video_Conferencing.meeting_uuid span=1h
-| timechart span=1h dc(Video_Conferencing.meeting_uuid) as "Number of Meetings" avg(eval(if(like(nodename,"%Ended"),duration/60,null()))) as "Average Meeting Duration (min)"
-| eval "Average Meeting Duration (min)" = round('Average Meeting Duration (min)',2)</query>
+          <query>`rw_vc_indexes` sourcetype="m365:teams:callRecord" 
+| spath path="sessions{}.caller" output=caller
+| fields id caller
+| mvexpand caller
+| spath input=caller
+| stats dc("identity.user.id") as "Unique Participants" by userAgent.headerValue</query>
           <earliest>$time_tok.earliest$</earliest>
           <latest>$time_tok.latest$</latest>
         </search>
-        <option name="charting.axisTitleX.visibility">collapsed</option>
-        <option name="charting.axisY.abbreviation">auto</option>
-        <option name="charting.axisY2.abbreviation">auto</option>
-        <option name="charting.axisY2.enabled">1</option>
-        <option name="charting.chart">column</option>
-        <option name="charting.chart.overlayFields">"Average Meeting Duration (min)"</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.legend.placement">bottom</option>
-        <option name="refresh.display">progressbar</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
       </chart>
-      <html>
-        <b>Description:</b> Number of meetings and Average meeting duration over time. This includes the following type of meetings: instant, scheduled, recurring with and without fix scheduled time. 
-      </html>
     </panel>
     <panel>
       <chart>
-        <title>Meetings On Time vs Over Time</title>
+        <title>Participant User Agent - Platform</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype="zoom:webhook" event=meeting.ended payload.object.type=2 OR payload.object.type=8
-| eval endtime = strptime('payload.object.end_time',"%FT%TZ"), starttime = strptime('payload.object.start_time',"%FT%TZ"), real_duration = round((endtime - starttime)/60,2)
-| eval overTime = if(real_duration&gt;'payload.object.duration',1,0)
-| timechart span=1h sum(overTime) as overTime count(eval(overTime=0)) as onTime
-| eval total = overTime + onTime, "onTime%" = round(onTime / total * 100,2)
-| fields - total</query>
+          <query>`rw_vc_indexes` sourcetype="m365:teams:callRecord" 
+| spath path="sessions{}.caller" output=caller
+| fields id caller
+| mvexpand caller
+| spath input=caller
+| stats dc("identity.user.id") as "Unique Participants" by userAgent.platform</query>
           <earliest>$time_tok.earliest$</earliest>
           <latest>$time_tok.latest$</latest>
         </search>
-        <option name="charting.axisTitleX.visibility">collapsed</option>
-        <option name="charting.axisTitleY.text">Number of Meetings</option>
-        <option name="charting.axisTitleY2.text">Meeting On Time%</option>
-        <option name="charting.axisY.abbreviation">auto</option>
-        <option name="charting.axisY2.enabled">1</option>
-        <option name="charting.axisY2.maximumNumber">100</option>
-        <option name="charting.chart">column</option>
-        <option name="charting.chart.overlayFields">onTime%</option>
-        <option name="charting.chart.stackMode">stacked</option>
-        <option name="charting.drilldown">all</option>
-        <option name="charting.legend.placement">bottom</option>
-        <option name="refresh.display">progressbar</option>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
       </chart>
-      <html>
-        <b>Description:</b> This includes the following type of meetings: scheduled and recurring with fix scheduled time. 
-      </html>
     </panel>
-  </row>
-  <row>
     <panel>
       <chart>
-        <title>Meeting Types</title>
+        <title>Type of Meetings</title>
         <search>
-          <query>| tstats dc(Video_Conferencing.meeting_uuid) as count from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by Video_Conferencing.type</query>
+          <query>`rw_vc_indexes`sourcetype="m365:teams:callRecord"
+| stats dc(id) as "Unique Meetings" by "type"</query>
           <earliest>$time_tok.earliest$</earliest>
           <latest>$time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -251,7 +218,7 @@
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
+        <option name="charting.drilldown">none</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -266,10 +233,10 @@
     </panel>
     <panel>
       <chart>
-        <title>Zoom Access by Device</title>
+        <title>Type of Modalities</title>
         <search>
-          <query>`rw_vc_indexes` sourcetype="zoom:webhook" 
-| stats count by payload.object.client_type</query>
+          <query>`rw_vc_indexes` sourcetype="m365:teams:callRecord"
+| stats dc(id) as "Unique Meetings" by "modalities{}"</query>
           <earliest>$time_tok.earliest$</earliest>
           <latest>$time_tok.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -284,19 +251,18 @@
         <option name="charting.axisY.abbreviation">none</option>
         <option name="charting.axisY.scale">linear</option>
         <option name="charting.axisY2.abbreviation">none</option>
-        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.enabled">0</option>
         <option name="charting.axisY2.scale">inherit</option>
         <option name="charting.chart">pie</option>
         <option name="charting.chart.bubbleMaximumSize">50</option>
         <option name="charting.chart.bubbleMinimumSize">10</option>
         <option name="charting.chart.bubbleSizeBy">area</option>
         <option name="charting.chart.nullValueMode">gaps</option>
-        <option name="charting.chart.overlayFields">median_avg_cpu,median_zoom_max_cpu_usage</option>
         <option name="charting.chart.showDataLabels">none</option>
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">default</option>
         <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
+        <option name="charting.drilldown">none</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -313,9 +279,55 @@
   <row>
     <panel>
       <chart>
-        <title># Meetings by # Participants</title>
+        <title>Meeting Count by Duration</title>
         <search>
-          <query>| tstats dc(Video_Conferencing.Meeting.Meeting_Participant.participant_id) as participant_count from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype=zoom:webhook nodename=Video_Conferencing.Meeting.Meeting_Participant.Meeting_Participant_Joined by _time Video_Conferencing.meeting_uuid span=1h 
+          <query>| tstats max(Video_Conferencing.duration) as duration from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype="m365:teams:callRecord" (nodename=Video_Conferencing.Meeting.Meeting_Started OR nodename=Video_Conferencing.Meeting.Meeting_Ended) OR (nodename=Video_Conferencing.Webinar.Webinar_Started OR nodename=Video_Conferencing.Webinar.Webinar_Ended) by _time nodename Video_Conferencing.meeting_uuid span=1h
+| timechart span=1h dc(Video_Conferencing.meeting_uuid) as "Unique Meetings" avg(eval(if(like(nodename,"%Ended"),duration/60,null()))) as "Average Meeting Duration (min)"
+| eval "Average Meeting Duration (min)" = round('Average Meeting Duration (min)',2)</query>
+          <earliest>$time_tok.earliest$</earliest>
+          <latest>$time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.abbreviation">none</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.abbreviation">auto</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.abbreviation">auto</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.overlayFields">"Average Meeting Duration (min)"</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.mode">standard</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.lineWidth">2</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Number of Meetings by Number of Participants</title>
+        <search>
+          <query>| tstats dc(Video_Conferencing.Meeting.Meeting_Participant.participant_id) as participant_count from datamodel=Video_Conferencing where `rw_vc_indexes` sourcetype="m365:teams:callRecord" nodename=Video_Conferencing.Meeting.Meeting_Participant.Meeting_Participant_Joined OR nodename=Video_Conferencing.Meeting.Meeting_Participant.Meeting_Participant_Left by _time Video_Conferencing.meeting_uuid span=1h 
 | where participant_count&gt;0 
 | eval participant_count = case(
     participant_count&lt;=2,"001-002",
@@ -332,6 +344,7 @@
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
         <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
         <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Number of Meetings</option>
         <option name="charting.axisTitleY.visibility">visible</option>
         <option name="charting.axisTitleY2.visibility">visible</option>
         <option name="charting.axisX.abbreviation">none</option>
@@ -350,7 +363,7 @@
         <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
         <option name="charting.chart.stackMode">stacked</option>
         <option name="charting.chart.style">shiny</option>
-        <option name="charting.drilldown">all</option>
+        <option name="charting.drilldown">none</option>
         <option name="charting.layout.splitSeries">0</option>
         <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
         <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
@@ -362,6 +375,81 @@
         <option name="trellis.scales.shared">1</option>
         <option name="trellis.size">medium</option>
       </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <map>
+        <title>Attendee's Geographical Location</title>
+        <search>
+          <query>`rw_vc_indexes` sourcetype="m365:teams:callRecord" 
+| spath "sessions{}" output="sessions" 
+| spath "sessions{}.segments{}" output="segments" 
+| eval call_startDateTime = startDateTime, call_endDateTime = endDateTime 
+| eval number_of_sessions = mvcount(sessions), number_of_segments = mvcount(segments), call_id = id 
+| fields _time call_startDateTime call_endDateTime call_id sessions number_of_sessions number_of_segments 
+| mvexpand sessions 
+| spath input=sessions path=id output=session_id 
+| spath input=sessions path=segments{} output=segments 
+| spath input=segments path=id output=segment_id 
+| fields _time call_startDateTime call_endDateTime call_id session_id segment_id segments number_of_sessions number_of_segments 
+| eval zip = mvzip(mvzip(session_id,segment_id,"########"),segments,"########") 
+| fields _time call_startDateTime call_endDateTime call_id zip number_of_sessions number_of_segments 
+| mvexpand zip 
+| eval zip = split(zip,"########"), session_id = mvindex(zip,0), segment_id = mvindex(zip,1), segments = mvindex(zip,-1) 
+| fields - zip 
+| mvexpand segments 
+| spath input=segments path=endDateTime output=segment_endDateTime 
+| spath input=segments path=startDateTime output=segment_startDateTime 
+| spath input=segments path=caller output=caller 
+| spath input=segments path=media{} output=media 
+| eval number_of_media = mvcount(media) 
+| fields - segments 
+| mvexpand media 
+| spath input=media path=label output=media_label 
+| spath input=media path="callerDevice" 
+| spath input=media path="callerNetwork" 
+| spath input=callerDevice 
+| spath input=callerNetwork 
+| spath input=caller 
+| fields - media callerDevice callerNetwork caller 
+| foreach * 
+    [ eval &lt;&lt;FIELD&gt;&gt; = if('&lt;&lt;FIELD&gt;&gt;'="null",null(),'&lt;&lt;FIELD&gt;&gt;')] 
+| eval reflexiveIPAddress = if(like(reflexiveIPAddress,"%.%.%."),reflexiveIPAddress."0",reflexiveIPAddress) 
+| iplocation reflexiveIPAddress 
+| stats dc("identity.user.id") as " Unique Participants" by Country 
+| geom geo_countries featureIdField="Country"</query>
+          <earliest>$time_tok.earliest$</earliest>
+          <latest>$time_tok.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="mapping.choroplethLayer.colorBins">5</option>
+        <option name="mapping.choroplethLayer.colorMode">auto</option>
+        <option name="mapping.choroplethLayer.maximumColor">0xaf575a</option>
+        <option name="mapping.choroplethLayer.minimumColor">0x62b3b2</option>
+        <option name="mapping.choroplethLayer.neutralPoint">0</option>
+        <option name="mapping.choroplethLayer.shapeOpacity">0.75</option>
+        <option name="mapping.choroplethLayer.showBorder">1</option>
+        <option name="mapping.data.maxClusters">100</option>
+        <option name="mapping.legend.placement">bottomright</option>
+        <option name="mapping.map.center">(29.54,1.93)</option>
+        <option name="mapping.map.panning">1</option>
+        <option name="mapping.map.scrollZoom">0</option>
+        <option name="mapping.map.zoom">2</option>
+        <option name="mapping.markerLayer.markerMaxSize">50</option>
+        <option name="mapping.markerLayer.markerMinSize">10</option>
+        <option name="mapping.markerLayer.markerOpacity">0.8</option>
+        <option name="mapping.showTiles">1</option>
+        <option name="mapping.tileLayer.maxZoom">7</option>
+        <option name="mapping.tileLayer.minZoom">0</option>
+        <option name="mapping.tileLayer.tileOpacity">1</option>
+        <option name="mapping.type">choropleth</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">medium</option>
+      </map>
     </panel>
   </row>
 </form>
