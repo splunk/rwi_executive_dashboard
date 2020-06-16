@@ -1,6 +1,0 @@
-"meeting_type","payload.object.type"
-"Instant Meeting",1
-"Scheduled Meeting",2
-"Recurring Meeting (no fixed time)",3
-"Personal Meeting ID",4
-"Recurring Meeting (fixed time)",8

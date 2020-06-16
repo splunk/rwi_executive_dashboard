@@ -21,7 +21,12 @@ Check out the [**runbook**](RUNBOOK.md) for details!
 ## Dashboards Reference
 * See [Runbook: Remote Work Insights - Executive Dashboard](RUNBOOK.md#remote-work-insights---executive-dashboard)
 
+## Version 1.1+ Update Notice
+* New app prerequisite MUST be installed: [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/app/5063)
+* See [RUNBOOK.md](RUNBOOK.md) for details
+
 ## Latest Updates
+* Latest Version: v1.1.1
 * See [Changelog](CHANGELOG.md)
 
 ## License

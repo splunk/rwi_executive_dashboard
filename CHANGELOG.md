@@ -5,6 +5,19 @@
 * The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2020-06-15
+- Included a **Guided Setup** to assist with the App configuration. This new feature is dependant on the [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/apps/id/Splunk_SA_rwi-executive-dashboard).
+  - App Prerequisites check
+  - Indexes macros configuration
+  - Data collections check
+  - Features/Navigation bar configuration
+- Updated the **Video Conferencing SPL searches** to leverage the Video Conferencing Data Model from the [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/apps/id/Splunk_SA_rwi-executive-dashboard).
+- **Video Conferencing Ops Dashboard** to support the Cisco Webex Meetings, Microsoft Teams and Zoom data collected by the following connector:
+  - [Cisco WebEx Meetings Add-on for Splunk](https://splunkbase.splunk.com/app/4991)
+  - [Microsoft Teams Add-on for Splunk](https://splunkbase.splunk.com/app/4994)
+  - [Splunk Connect for Zoom](https://splunkbase.splunk.com/app/4961/)
+- App icon updated
+
 ## [1.0.4] - 2020-04-15
 - Bump version to 1.0.4 to follow Splunkbase versioning
 

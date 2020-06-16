@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Guided Setup</title>
+    <link rel="shortcut icon" href="{{SPLUNKWEB_URL_PREFIX}}/static/img/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/css/build/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/css/build/pages/dashboard-simple-bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/Splunk_SA_rwi-executive-dashboard/js/common/CustomPages/AppSetupPages/AppSetupPages.css" />
+    <link rel="stylesheet/less" type="text/css" href="{{SPLUNKWEB_URL_PREFIX}}/static/app/Splunk_SA_rwi-executive-dashboard/less/setup.less" />
+  </head>
+  <body class="locale-en">
+    <header>
+    <a class="navSkip" href="#navSkip" tabindex="1">Screen reader users, click here to skip the navigation bar</a>
+    <div class="header splunk-header">
+      <div id="placeholder-splunk-bar">
+        <a href="{{SPLUNKWEB_URL_PREFIX}}/app/launcher/home" class="brand" title="splunk &gt; listen to your data">splunk<strong>&gt;</strong></a>
+      </div>
+      <div id="placeholder-app-bar"></div>
+    </div>
+	</header>
+    <div class="dashboard-body container-fluid main-section-body">
+      <div class="dashboard-row">
+        <div id="app-setup-wizard"></div>
+      </div>
+      <div class="dashboard-row wizard-page">
+      </div>
+    </div>
+    
+    <!-- 
+      END LAYOUT
+      -->
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/config?autoload=1"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/i18n.js"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/i18ncatalog?autoload=1"></script>
+    <script src="{{SPLUNKWEB_URL_PREFIX}}/static/js/build/simplexml.min/config.js"></script>
+    <script type="text/javascript">
+      less = { globalVars: { theme: "" } };
+    </script> 
+    <script type="text/javascript">
+      // <![CDATA[
+      require.config({
+          paths: {
+              "common": "{{SPLUNKWEB_URL_PREFIX}}/static/app/Splunk_SA_rwi-executive-dashboard/js/common",
+              "Splunk_SA_rwi-executive-dashboard": "{{SPLUNKWEB_URL_PREFIX}}/static/app/Splunk_SA_rwi-executive-dashboard/js/Splunk_SA_rwi-executive-dashboard",
+          },
+          baseUrl: "{{SPLUNKWEB_URL_PREFIX}}/static/js"
+      });
+      
+      
+      require([
+          "splunkjs/mvc",
+          "splunkjs/mvc/utils",
+          "splunkjs/mvc/tokenutils",
+          "underscore",
+          "jquery",
+          "splunkjs/mvc/simplexml",
+          "splunkjs/mvc/layoutview",
+          "splunkjs/mvc/simplexml/dashboardview",
+          "Splunk_SA_rwi-executive-dashboard/setup/app_setup_wizard"
+          ],
+          function(
+              mvc,
+              utils,
+              TokenUtils,
+              _,
+              $,
+              DashboardController,
+              LayoutView,
+              Dashboard,
+              AppSetupWizard
+              ) {
+      
+      
+              //
+              // SPLUNK HEADER AND FOOTER
+              //
+      
+              $('header').remove();
+              new LayoutView({
+              "hideAppBar": false, 
+              "hideAppsList": false, 
+              "hideChrome": false, 
+              "hideSplunkBar": false, 
+              "hideFooter": false,
+              "layout": "scrolling"
+              },{tokens: true}).render().getContainerElement()
+              .appendChild($('.dashboard-body')[0]);
+      
+      
+              //
+              // DASHBOARD EDITOR
+              //
+      
+              new Dashboard({
+                  id: 'dashboard',
+                  el: $('.dashboard-body'),
+                  editable: false
+              }, {tokens: true}).render();
+      
+              AppSetupWizard.render();
+              //
+              // DASHBOARD READY
+              //
+      
+              DashboardController.ready();
+          }
+      );
+      // ]]>
+    </script>
+  </body>
+</html>
