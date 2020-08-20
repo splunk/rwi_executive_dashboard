@@ -241,8 +241,8 @@
 | rename log.* as * 
 | rex field=description "(?&lt;failure_reason&gt;(?&lt;=\ Reason:\s)([^,]+))" 
 | timechart dc(user) by failure_reason useother=f usenull=f</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
@@ -288,8 +288,8 @@
     log.description!="*Invalid username*" log.description!="*Internal okta*" log.description!="Existing user session found"
     by _time log.object span=30m
 | timechart span=30m dc(log.src_ip) as unique_users by log.object</query>
-          <earliest>-24h@h</earliest>
-          <latest>now</latest>
+          <earliest>$time.earliest$</earliest>
+          <latest>$time.latest$</latest>
           <sampleRatio>1</sampleRatio>
         </search>
         <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
