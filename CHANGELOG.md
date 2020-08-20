@@ -5,6 +5,10 @@
 * The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2020-08-20
+- Updated app.manifest: Removed dependencies to unblock Splunk Cloud Self-Service Installation upgrades from 1.0.x to 1.1.x
+- Updated rw_vpn_gp_logins.xml: fix panels to use the time token
+
 ## [1.1.1] - 2020-06-15
 - Included a **Guided Setup** to assist with the App configuration. This new feature is dependant on the [Splunk Add-on for RWI - Executive Dashboard](https://splunkbase.splunk.com/apps/id/Splunk_SA_rwi-executive-dashboard).
   - App Prerequisites check
